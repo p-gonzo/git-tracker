@@ -1,0 +1,32 @@
+[
+  {
+    "org_name": "IronMan-HR",
+    "repo_name": "IronMan-HR",
+    "group_name": "Team Iron Man",
+    "group_members": ["Scott", "Lina", "Koichi"]
+  },
+  {
+    "org_name": "Black-Widow15",
+    "repo_name": "bwMeetup",
+    "group_name": "Team Black Widow",
+    "group_members": ["Ian", "Michael", "Mandy"]
+  },
+  {
+    "org_name": "CoolStuffIncorporated",
+    "repo_name": "yelp-search",
+    "group_name": "Team Thor",
+    "group_members": ["Rose", "Charles", "Nick B", "Alon"]
+  },
+  {
+    "org_name": "TeamHulk",
+    "repo_name": "TeamHulk",
+    "group_name": "Team Hulk",
+    "group_members": ["Anthony", "Laurents", "Hany", "Dean"]
+  },
+  {
+    "org_name": "",
+    "repo_name": "",
+    "group_name": "Team Hawkeye",
+    "group_members": ["Phil", "Nick R", "John", "Arjun"]
+  }
+]
