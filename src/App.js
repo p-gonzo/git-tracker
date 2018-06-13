@@ -3,6 +3,8 @@ import * as $ from 'jquery';
 import CommitBlade from './components/commit-blade.js';
 import StudentBlade from './components/student-blade.js';
 import RepoBlade from './components/repo-blade.js';
+import Display from './components/display.js';
+
 import './App.css';
 import * as allStudents from './student-directory.json';
 import * as allRepos from './project-directory.json';
@@ -11,51 +13,99 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      studentsAreShowing: false,
       students: allStudents,
       currentStudent: null,
       repos: allRepos,
       currentRepo: null,
       commits: [],
+      filteredCommits: []
     }
     this.maybeGetCommits();
   }
 
+
+  filterCommitsByStudent() {
+    if(this.state.currentStudent === null) {
+      this.setState({
+        filteredCommits: this.state.commits
+      })
+    } else {
+      this.setState({
+        filteredCommits: this.state.commits.filter((commit => 
+          commit.user.login === this.state.currentStudent['github-handle']
+        ))
+      })
+    }
+  }
+
   setCurrentStudent(student) {
-    this.setState({currentStudent: student})
+    this.setState({currentStudent: student}, () => {
+      this.filterCommitsByStudent();
+    })
   }
 
   setCurrentRepo(repo) {
-    this.setState({currentRepo: repo})
+    let stateUpdate = {
+      currentRepo: repo, 
+      studentsAreShowing: true
+    }
+    if(this.state.currentStudent && !repo.group_members.includes(this.state.currentStudent.name)) {
+      stateUpdate.currentStudent = null;
+    }
+    this.setState(stateUpdate)
   }
 
-  maybeGetCommits() {
-    if(this.state.currentRepo) {
+  maybeGetCommits(oldCurrentRepo) {
+    if(this.state.currentRepo && this.state.currentRepo !== oldCurrentRepo) {
       this.getCommits();
     }
   }
 
   componentDidUpdate(oldProps, oldState) {
-    this.maybeGetCommits();
+    this.maybeGetCommits(oldState.currentRepo);
   }
 
   getCommits() {
-    $.get(`https://api.github.com/repos/${this.state.currentRepo.org_name}/${this.state.currentRepo.repo_name}/pulls?state=all`)
-    .done((resp) => {
-      this.setState({commits: resp});
+    let commitUrl = `https://api.github.com/repos/${this.state.currentRepo.org_name}/${this.state.currentRepo.repo_name}/pulls?state=all`
+    $.get({
+      url: commitUrl,
+      headers: {
+        "Authorization": "token c4b5f5440253acb46aa6b90e56fe366f4eb31df1"
+      }
     })
-    .fail((err) => {throw err})
+    .done((resp) => {
+      this.setState({commits: resp}, () => {
+        this.filterCommitsByStudent();
+      });
+    })
+    .fail((err) => {console.log(err.getAllResponseHeaders())})
   }
 
   render() {
     return (
-      <div className="container">
-        <div>
-          <div> Selected Student: { this.state.currentStudent ? this.state.currentStudent.name : null } </div>
-          <div> Selected Repo: { this.state.currentRepo ? this.state.currentRepo.org_name : null } </div>
+      <div className="v-container">
+          <Display
+            currentStudent={this.state.currentStudent}
+            currentRepo={this.state.currentRepo}
+          />
+        <div className="container">
+          <RepoBlade 
+            selectRepo={this.setCurrentRepo.bind(this)} 
+            repos={this.state.repos} 
+            selectedRepo={this.state.currentRepo}
+          />
+          <StudentBlade 
+            isHidden={!!this.state.studentsAreShowing} 
+            selectedStudents={this.state.currentRepo ? this.state.currentRepo.group_members : []}
+            selectStudent={this.setCurrentStudent.bind(this)} 
+            students={allStudents}
+          />
+          <CommitBlade 
+            isHidden={!!this.state.currentRepo} 
+            data={this.state.filteredCommits}
+          />
         </div>
-        <StudentBlade selectStudent={this.setCurrentStudent.bind(this)} students={this.state.students}/>
-        <RepoBlade selectRepo={this.setCurrentRepo.bind(this)} repos={this.state.repos}/>
-        <CommitBlade data={this.state.commits}/>
       </div>
     );
   }

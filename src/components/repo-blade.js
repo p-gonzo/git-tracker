@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import Repo from './repo.js';
 
+let id = 0;
+
 class RepoBlade extends Component {
   render() {
-    console.log('>>>>>', this.props.repos)
     return (
-      <div>
+      <div className="blade">
+        <h3> Tracked Repos </h3>
         {
-          this.props.repos.map((repo) => <Repo select={this.props.selectRepo} repo={repo}/>)
+          this.props.repos.map((repo) => <Repo key={id++} isSelected={this.props.selectedRepo === repo} select={this.props.selectRepo} repo={repo}/>)
         }
       </div>
     );

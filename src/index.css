@@ -2,4 +2,58 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background-color: #ADD7EC;
+}
+
+.selected {
+  background-color: lightcoral;
+}
+
+.bold {
+  font-weight: 900;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.small-text {
+  font-size: 10pt;
+}
+
+.blade {
+  background-color: gray;
+  width: 20em;
+  padding-top: 1.5em;
+  margin-top: 1em;
+  border: 1px solid black;
+}
+
+.card {
+  background-color: #519ABD;
+  color: white;
+  border: 1px solid black;
+  padding: 0.4em;
+  margin-top: 0.2em;
+  margin-right: 0.5em;
+  margin-bottom: 0.2em;
+}
+
+
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.fade-leave {
+  opacity: 1;
+}
+
+.fade-leave.fade-leave-active {
+  opacity: 0.01;
+  transition: opacity 500ms ease-in;
 }

@@ -3,30 +3,48 @@
     "org_name": "IronMan-HR",
     "repo_name": "IronMan-HR",
     "group_name": "Team Iron Man",
-    "group_members": ["Scott", "Lina", "Koichi"]
+    "group_members": ["Scott McCreary", "Lina Lei", "Koichi Sakamaki"]
   },
   {
     "org_name": "Black-Widow15",
     "repo_name": "bwMeetup",
     "group_name": "Team Black Widow",
-    "group_members": ["Ian", "Michael", "Mandy"]
+    "group_members": ["Ian Schmidt", "Michael Cortez", "Mandy Mak"]
   },
   {
     "org_name": "CoolStuffIncorporated",
     "repo_name": "yelp-search",
     "group_name": "Team Thor",
-    "group_members": ["Rose", "Charles", "Nick B", "Alon"]
+    "group_members": ["Rose Lin", "Charles Hufnagel", "Nick Boylan", "Alon Bibring"]
   },
   {
     "org_name": "TeamHulk",
     "repo_name": "TeamHulk",
     "group_name": "Team Hulk",
-    "group_members": ["Anthony", "Laurents", "Hany", "Dean"]
+    "group_members": ["Anthony Barker", "Laurents Mohr", "Hany Rostom", "Dean Hin"]
   },
   {
-    "org_name": "",
-    "repo_name": "",
+    "org_name": "Job-it",
+    "repo_name": "job-it-web-app",
     "group_name": "Team Hawkeye",
-    "group_members": ["Phil", "Nick R", "John", "Arjun"]
+    "group_members": ["Philip Gonzalez", "Nick Rogers", "John Cynn", "Arjun Logeswaran"]
+  },
+  {
+    "org_name": "TeamGroot",
+    "repo_name": "Save-Gudetama",
+    "group_name": "Team Groot",
+    "group_members": ["Laurents Mohr", "Michael Cortez", "Dean Hin"]
+  },
+  {
+    "org_name": "IronMan-HR",
+    "repo_name": "TeamHulk",
+    "group_name": "Team Gamora",
+    "group_members": ["Rose Lin", "Scott McCreary", "Lina Lei"]
+  },
+  {
+    "org_name": "Job-it",
+    "repo_name": "IronMan-HR",
+    "group_name": "Team Spiderman",
+    "group_members": ["Philip Gonzalez", "Nick Rogers", "John Cynn"]
   }
 ]

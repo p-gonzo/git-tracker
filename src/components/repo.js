@@ -7,9 +7,8 @@ class Repo extends Component {
   }
 
   render() {
-    console.log(this.props.repo)
     return (
-      <div onClick={this.handleClick.bind(this)}>
+      <div className={'card ' + (this.props.isSelected ? 'selected' : '')} onClick={this.handleClick.bind(this)}>
         { this.props.repo.org_name }
       </div>
     );
