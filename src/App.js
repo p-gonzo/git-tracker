@@ -9,6 +9,8 @@ import './App.css';
 import * as allStudents from './student-directory.json';
 import * as allRepos from './project-directory.json';
 
+require('dotenv').config()
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -68,10 +70,11 @@ class App extends Component {
 
   getCommits() {
     let commitUrl = `https://api.github.com/repos/${this.state.currentRepo.org_name}/${this.state.currentRepo.repo_name}/pulls?state=all`
+    console.log('>>>>>>>', process.env)
     $.get({
       url: commitUrl,
       headers: {
-        "Authorization": "token c4b5f5440253acb46aa6b90e56fe366f4eb31df1"
+        "Authorization": "token " + process.env.GITHUB_TOKEN
       }
     })
     .done((resp) => {
@@ -98,6 +101,7 @@ class App extends Component {
           <StudentBlade 
             isHidden={!!this.state.studentsAreShowing} 
             selectedStudents={this.state.currentRepo ? this.state.currentRepo.group_members : []}
+            currentStudent={this.state.currentStudent}
             selectStudent={this.setCurrentStudent.bind(this)} 
             students={allStudents}
           />

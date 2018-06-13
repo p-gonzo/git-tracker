@@ -5,10 +5,6 @@ body {
   background-color: #ADD7EC;
 }
 
-.selected {
-  background-color: lightcoral;
-}
-
 .bold {
   font-weight: 900;
 }
@@ -17,16 +13,30 @@ body {
   font-style: italic;
 }
 
+.centered {
+  justify-content: center;
+}
+
+.v-centered {
+  align-items: center;
+}
+
 .small-text {
   font-size: 10pt;
 }
 
+.avatar {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+}
+
 .blade {
-  background-color: gray;
+  background-color: lightgray;
   width: 20em;
   padding-top: 1.5em;
   margin-top: 1em;
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 
 .card {
@@ -56,4 +66,8 @@ body {
 .fade-leave.fade-leave-active {
   opacity: 0.01;
   transition: opacity 500ms ease-in;
+}
+
+.selected {
+  background-color: lightcoral;
 }
