@@ -25,6 +25,7 @@ class App extends Component {
     this.maybeGetCommits();
   }
 
+  
 
   filterCommitsByStudent() {
     if(this.state.currentStudent === null) {
