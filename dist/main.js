@@ -78,7 +78,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("throw new Error(\"Module parse failed: Unexpected token (7:16)\\nYou may need an appropriate loader to handle this file type.\\n| import registerServiceWorker from './registerServiceWorker';\\n| \\n| ReactDOM.render(<App />, document.getElementById('root'));\\n| registerServiceWorker();\\n| \");//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvaW5kZXguanMuanMiLCJzb3VyY2VzIjpbXSwibWFwcGluZ3MiOiIiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/index.js\n");
+eval("throw new Error(\"Module parse failed: Unexpected token (6:16)\\nYou may need an appropriate loader to handle this file type.\\n| import App from './App';\\n| \\n| ReactDOM.render(<App />, document.getElementById('root'));\\n| \");\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 

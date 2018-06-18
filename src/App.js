@@ -5,7 +5,6 @@ import StudentBlade from './components/student-blade.js';
 import RepoBlade from './components/repo-blade.js';
 import Display from './components/display.js';
 
-import './App.css';
 import * as allStudents from './student-directory.json';
 import * as allRepos from './project-directory.json';
 
