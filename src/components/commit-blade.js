@@ -16,6 +16,7 @@ class CommitBlade extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(this.props)
     this.getCommitDetails(nextProps.data);
   }
 
@@ -34,16 +35,15 @@ class CommitBlade extends Component {
   }
 
   getCommitDetails(commits) {
-    console.log(commits.length)
+    if(!Array.isArray(commits)) return;
     let commitDetails = commits.map((commit) => {
-      let commitUrl = commit.url
-      return $.get({
-        url: commitUrl,
-        headers: {
-          "Authorization": "token c4b5f5440253acb46aa6b90e56fe366f4eb31df1"
-        }
-      }).catch(e => console.log(e.getAllResponseHeaders()))
-      // .then((resp) => {return resp})
+      console.log(commit)
+      return $.post({
+        url: '/api/commits/expand/' + commit._id,
+      }).catch(e => {
+        console.log(e.getAllResponseHeaders());
+        return null;
+      })
     });
 
     Promise.all(commitDetails)
@@ -51,8 +51,10 @@ class CommitBlade extends Component {
       this.setState({commitDetails: details}, () => {
         this.reduceDeletions();
         this.reduceAdditions();
+        console.log('STATE: ', this.state)
       })
     })
+    .catch((e) => {throw e})
   }
 
   render() {
@@ -62,9 +64,9 @@ class CommitBlade extends Component {
         <div className={"small-text"}>( Total additions: {this.state.additions} Total deletions: {this.state.deletions})</div>
         { this.props.data.length === 0 ? <span> No commits found </span> : null }
         { 
-          this.props.data.map((commit, idx) => {
+          this.props.data ? this.props.data.map((commit, idx) => {
             return (<Commit key={id++} data={commit} details={this.state.commitDetails ? this.state.commitDetails[idx] : null}/>)
-          }) 
+          }) : null
         }
       </div>
     ) : null ;

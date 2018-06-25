@@ -1,17 +1,6 @@
 import React from 'react';
 import * as allStudents from '../student-directory.json';
 
-// Fields to Expand:
-// html_url
-// comments_url
-// created_at
-// updated_at
-// closed_at
-// merged_at
-// user
-  // avatar_url
-  // html_url
-
 const prettifyDate = (datestr) => {
   let comparator = new Date(datestr);
   let now = new Date(Date.now());
@@ -41,10 +30,10 @@ const ExpandedCommit = ({ commit, commitDetails, hidden }) => {
     <div className="small-text">
       <div className="user v-container v-centered centered">
         <h3>
-          { allStudents.filter((student) => student["github-handle"] === commit.user.login)[0].name }
+          { commit.author }
         </h3>
-        <a href={commit.user.html_url}>
-          <img className="avatar" src={commit.user.avatar_url}></img>
+        <a href={commit.user_html_url}>
+          <img className="avatar" src={commit.author_avatar}></img>
         </a>
       </div>
       {
@@ -70,3 +59,6 @@ const ExpandedCommit = ({ commit, commitDetails, hidden }) => {
 }
 
 export default ExpandedCommit;
+
+
+

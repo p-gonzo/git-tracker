@@ -5,9 +5,6 @@ import StudentBlade from './components/student-blade.js';
 import RepoBlade from './components/repo-blade.js';
 import Display from './components/display.js';
 
-import * as allStudents from './student-directory.json';
-import * as allRepos from './project-directory.json';
-
 require('dotenv').config()
 
 class App extends Component {
@@ -15,9 +12,9 @@ class App extends Component {
     super(props);
     this.state = {
       studentsAreShowing: false,
-      students: allStudents,
+      students: [],
       currentStudent: null,
-      repos: allRepos,
+      repos: [],
       currentRepo: null,
       commits: [],
       filteredCommits: []
@@ -25,7 +22,18 @@ class App extends Component {
     this.maybeGetCommits();
   }
 
-  
+  componentDidMount() {
+    $.get('/api/students')
+    .then((students) => {
+      this.setState({students})
+    })
+    .catch(e => {throw e})
+    $.get('/api/projects')
+    .then((projects) => {
+      this.setState({repos: projects})
+    })
+    .catch(e => {throw e})
+  }
 
   filterCommitsByStudent() {
     if(this.state.currentStudent === null) {
@@ -35,7 +43,7 @@ class App extends Component {
     } else {
       this.setState({
         filteredCommits: this.state.commits.filter((commit => 
-          commit.user.login === this.state.currentStudent['github-handle']
+          commit.author === this.state.currentStudent['github-handle']
         ))
       })
     }
@@ -69,15 +77,10 @@ class App extends Component {
   }
 
   getCommits() {
-    let commitUrl = `https://api.github.com/repos/${this.state.currentRepo.org_name}/${this.state.currentRepo.repo_name}/pulls?state=all`
-    console.log('>>>>>>>', process.env)
-    $.get({
-      url: commitUrl,
-      headers: {
-        "Authorization": "token " + process.env.GITHUB_TOKEN
-      }
-    })
+    $.get(`/api/commits/byProject/${this.state.currentRepo._id}`)
     .done((resp) => {
+      console.log(resp)
+      if(!resp) {return;}
       this.setState({commits: resp}, () => {
         this.filterCommitsByStudent();
       });
@@ -103,7 +106,7 @@ class App extends Component {
             selectedStudents={this.state.currentRepo ? this.state.currentRepo.group_members : []}
             currentStudent={this.state.currentStudent}
             selectStudent={this.setCurrentStudent.bind(this)} 
-            students={allStudents}
+            students={this.state.students}
           />
           <CommitBlade 
             isHidden={!!this.state.currentRepo} 
