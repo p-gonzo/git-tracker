@@ -40,12 +40,14 @@ Commit.prototype.getAll = () => {
   })
 }
 
-Commit.prototype.upsert = (doc) => {
+Commit.prototype.upsert = (document) => {
   return new Promise((resolve, reject) => {
-    Commit.findOneAndUpdate({git_id: doc.id}, Commit.fromGithubData(doc), {upsert: true}, function(err, doc){
+    if(!document || !document.id) reject(new Error('No document specified!'))
+    let document_id = document.id;
+    Commit.findOneAndUpdate({git_id: document_id}, Commit.fromGithubData(doc), {upsert: true}, function(err, doc){
       if(err) console.log(err);    
       if(!doc) { // findOneAndUpdate returns null when it upserts.
-        Commit.find({git_id: doc.id}).exec((err, commit) => {
+        Commit.find({git_id: document_id}).exec((err, commit) => {
           if(err) console.log(err);   
           resolve(commit);
         }) 
