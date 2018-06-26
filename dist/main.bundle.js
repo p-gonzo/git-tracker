@@ -31122,8 +31122,9 @@ var App = function (_Component) {
             students: this.state.students
           }),
           _react2.default.createElement(_commitBlade2.default, {
+            currentStudent: this.state.currentStudent,
             isHidden: !!this.state.currentRepo,
-            data: this.state.filteredCommits
+            commits: this.state.filteredCommits
           })
         )
       );
@@ -31155,6 +31156,10 @@ var _react2 = _interopRequireDefault(_react);
 var _commit = __webpack_require__(32);
 
 var _commit2 = _interopRequireDefault(_commit);
+
+var _filter = __webpack_require__(59);
+
+var _filter2 = _interopRequireDefault(_filter);
 
 var _jquery = __webpack_require__(10);
 
@@ -31191,8 +31196,7 @@ var CommitBlade = function (_Component) {
   _createClass(CommitBlade, [{
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      console.log(this.props);
-      this.getCommitDetails(nextProps.data);
+      this.getCommitDetails(nextProps.commits);
     }
   }, {
     key: 'reduceAdditions',
@@ -31217,7 +31221,6 @@ var CommitBlade = function (_Component) {
 
       if (!Array.isArray(commits)) return;
       var commitDetails = commits.map(function (commit) {
-        console.log(commit);
         return $.post({
           url: '/api/commits/expand/' + commit._id
         }).catch(function (e) {
@@ -31230,7 +31233,6 @@ var CommitBlade = function (_Component) {
         _this2.setState({ commitDetails: details }, function () {
           _this2.reduceDeletions();
           _this2.reduceAdditions();
-          console.log('STATE: ', _this2.state);
         });
       }).catch(function (e) {
         throw e;
@@ -31248,7 +31250,7 @@ var CommitBlade = function (_Component) {
           'h3',
           null,
           ' Commits (',
-          this.props.data.length,
+          this.props.commits.length,
           ' found) '
         ),
         _react2.default.createElement(
@@ -31260,14 +31262,20 @@ var CommitBlade = function (_Component) {
           this.state.deletions,
           ')'
         ),
-        this.props.data.length === 0 ? _react2.default.createElement(
+        this.props.commits.length === 0 ? _react2.default.createElement(
           'span',
           null,
           ' No commits found '
         ) : null,
-        this.props.data ? this.props.data.map(function (commit, idx) {
-          return _react2.default.createElement(_commit2.default, { key: id++, data: commit, details: _this3.state.commitDetails ? _this3.state.commitDetails[idx] : null });
-        }) : null
+        this.props.commits ? _react2.default.createElement(
+          _filter2.default,
+          { by: function by(childProps) {
+              console.log(childProps, _this3.props.currentStudent);return _this3.props.currentStudent === null || childProps.commit.author === _this3.props.currentStudent["github-handle"];
+            } },
+          this.props.commits.map(function (commit, idx) {
+            return _react2.default.createElement(_commit2.default, { key: id++, commit: commit, details: _this3.state.commitDetails ? _this3.state.commitDetails[idx] : null });
+          })
+        ) : null
       ) : null;
     }
   }]);
@@ -31340,21 +31348,21 @@ var Commit = function (_Component) {
         _react2.default.createElement(
           'span',
           { className: 'bold' },
-          this.props.data.author
+          this.props.commit.author
         ),
         ' committed at ',
         _react2.default.createElement(
           'span',
           { className: 'bold' },
-          this.props.data.created_at
+          this.props.commit.created_at
         ),
         ' with the following message: ',
         _react2.default.createElement(
           'span',
           { className: 'italic' },
-          this.props.data.title
+          this.props.commit.title
         ),
-        _react2.default.createElement(_expandedCommit2.default, { commit: this.props.data, commitDetails: this.props.details, hidden: !this.state.isExpanded })
+        _react2.default.createElement(_expandedCommit2.default, { commit: this.props.commit, commitDetails: this.props.details, hidden: !this.state.isExpanded })
       );
     }
   }]);
@@ -31379,37 +31387,40 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _studentDirectory = __webpack_require__(34);
+var _commitDates = __webpack_require__(57);
 
-var allStudents = _interopRequireWildcard(_studentDirectory);
+var _commitDates2 = _interopRequireDefault(_commitDates);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+var _githubProfile = __webpack_require__(58);
+
+var _githubProfile2 = _interopRequireDefault(_githubProfile);
+
+var _shyDiv = __webpack_require__(56);
+
+var _shyDiv2 = _interopRequireDefault(_shyDiv);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var prettifyDate = function prettifyDate(datestr) {
-  var comparator = new Date(datestr);
-  var now = new Date(Date.now());
-
-  var difference = now - comparator;
-  if (difference > 31540000000) {
-    return 'Over 1 year ago.';
-  }
-  var timeSince = {
-    minutes: Math.floor(difference / 60000),
-    hours: Math.floor(difference / 360000),
-    days: Math.floor(difference / 8640000),
-    weeks: Math.floor(difference / 60480000)
-  };
-  if (timeSince.weeks > 0) {
-    return timeSince.weeks + ' weeks ago';
-  } else if (timeSince.days > 0) {
-    return timeSince.days + ' days ago';
-  } else if (timeSince.hours > 0) {
-    return timeSince.hours + ' hours ago';
-  } else if (timeSince.minutes > 0) {
-    return timeSince.minutes + ' minutes ago';
-  }
+var renderAdditionsAndDeletions = function renderAdditionsAndDeletions(commitDetails) {
+  return commitDetails ? _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement('hr', null),
+    _react2.default.createElement(
+      'span',
+      null,
+      'Additions: ',
+      commitDetails.additions
+    ),
+    _react2.default.createElement('br', null),
+    _react2.default.createElement(
+      'span',
+      null,
+      'Deletions: ',
+      commitDetails.deletions
+    ),
+    _react2.default.createElement('hr', null)
+  ) : null;
 };
 
 var ExpandedCommit = function ExpandedCommit(_ref) {
@@ -31417,89 +31428,30 @@ var ExpandedCommit = function ExpandedCommit(_ref) {
       commitDetails = _ref.commitDetails,
       hidden = _ref.hidden;
 
-  prettifyDate(commit.created_at);
-  return hidden ? null : _react2.default.createElement(
-    'div',
-    { className: 'small-text' },
-    _react2.default.createElement(
+  return _react2.default.createElement(_shyDiv2.default, {
+    showIf: !hidden,
+    contents: _react2.default.createElement(
       'div',
-      { className: 'user v-container v-centered centered' },
-      _react2.default.createElement(
-        'h3',
-        null,
-        commit.author
-      ),
+      { className: 'small-text' },
+      _react2.default.createElement(_githubProfile2.default, { commit: commit }),
+      _react2.default.createElement(_shyDiv2.default, {
+        showIf: commitDetails && commitDetails.additions && commitDetails,
+        contents: renderAdditionsAndDeletions(commitDetails)
+      }),
+      _react2.default.createElement(_commitDates2.default, { commit: commit }),
       _react2.default.createElement(
         'a',
-        { href: commit.user_html_url },
-        _react2.default.createElement('img', { className: 'avatar', src: commit.author_avatar })
+        { href: commit.comments_url },
+        ' Get Comments! '
       )
-    ),
-    commitDetails ? _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(
-        'span',
-        null,
-        'Additions: ',
-        commitDetails.additions
-      ),
-      _react2.default.createElement('br', null),
-      _react2.default.createElement(
-        'span',
-        null,
-        'Deletions: ',
-        commitDetails.deletions
-      )
-    ) : null,
-    _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(
-        'span',
-        null,
-        'Created: ',
-        prettifyDate(commit.created_at)
-      ),
-      _react2.default.createElement('br', null),
-      _react2.default.createElement(
-        'span',
-        null,
-        'Updated: ',
-        prettifyDate(commit.updated_at)
-      ),
-      _react2.default.createElement('br', null),
-      _react2.default.createElement(
-        'span',
-        null,
-        'Closed: ',
-        prettifyDate(commit.closed_at)
-      ),
-      _react2.default.createElement('br', null),
-      _react2.default.createElement(
-        'span',
-        null,
-        'Merged: ',
-        prettifyDate(commit.merged_at)
-      )
-    ),
-    _react2.default.createElement(
-      'a',
-      { href: commit.comments_url },
-      ' Get Comments! '
     )
-  );
+  });
 };
 
 exports.default = ExpandedCommit;
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-module.exports = [{"name":"Alon Bibring","github-handle":"abibring"},{"name":"Anthony Barker","github-handle":"BarkerAW83"},{"name":"Arjun Logeswaran","github-handle":"arjunloges"},{"name":"Charles Hufnagel","github-handle":"chufnagel"},{"name":"Dean Hin","github-handle":"deanhinnet"},{"name":"Hany Rostom","github-handle":"hanyrostom"},{"name":"Ian Schmidt","github-handle":"ianschmidt83"},{"name":"John Cynn","github-handle":"jcynn12"},{"name":"Koichi Sakamaki","github-handle":"Drive2blue"},{"name":"Laurents Mohr","github-handle":"laurentsmohr"},{"name":"Lina Lei","github-handle":"lina-lei"},{"name":"Mandy Mak","github-handle":"makmandy"},{"name":"Michael Cortez","github-handle":"mchlcrtz"},{"name":"Nick Boylan","github-handle":"elsherrif546"},{"name":"Nick Rogers","github-handle":"nickrzip"},{"name":"Philip Gonzalez","github-handle":"p-gonzo"},{"name":"Rose Lin","github-handle":"R-SE"},{"name":"Scott McCreary","github-handle":"scottmccreary"}]
-
-/***/ }),
+/* 34 */,
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33532,6 +33484,180 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ShyDiv = function ShyDiv(_ref) {
+  var contents = _ref.contents,
+      showIf = _ref.showIf;
+  return showIf ? _react2.default.createElement(
+    'div',
+    null,
+    ' ',
+    contents,
+    ' '
+  ) : null;
+};
+
+exports.default = ShyDiv;
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _shyDiv = __webpack_require__(56);
+
+var _shyDiv2 = _interopRequireDefault(_shyDiv);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var prettifyDate = function prettifyDate(datestr) {
+  var comparator = new Date(datestr);
+  var now = new Date(Date.now());
+
+  var difference = now - comparator;
+  if (difference > 31540000000) {
+    return 'Over 1 year ago.';
+  }
+  var timeSince = {
+    minutes: Math.floor(difference / 60000),
+    hours: Math.floor(difference / 360000),
+    days: Math.floor(difference / 8640000),
+    weeks: Math.floor(difference / 60480000)
+  };
+  if (timeSince.weeks > 0) {
+    return timeSince.weeks + ' weeks ago';
+  } else if (timeSince.days > 0) {
+    return timeSince.days + ' days ago';
+  } else if (timeSince.hours > 0) {
+    return timeSince.hours + ' hours ago';
+  } else if (timeSince.minutes > 0) {
+    return timeSince.minutes + ' minutes ago';
+  }
+};
+
+var CommitDates = function CommitDates(_ref) {
+  var commit = _ref.commit;
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement('hr', null),
+    _react2.default.createElement(_shyDiv2.default, {
+      showIf: prettifyDate(commit.created_at),
+      contents: "Created: " + prettifyDate(commit.created_at)
+    }),
+    _react2.default.createElement(_shyDiv2.default, {
+      showIf: prettifyDate(commit.updated_at),
+      contents: "Updated: " + prettifyDate(commit.updated_at)
+    }),
+    _react2.default.createElement(_shyDiv2.default, {
+      showIf: prettifyDate(commit.closed_at),
+      contents: "Closed: " + prettifyDate(commit.closed_at)
+    }),
+    _react2.default.createElement(_shyDiv2.default, {
+      showIf: prettifyDate(commit.merged_at),
+      contents: "Merged: " + prettifyDate(commit.merged_at)
+    }),
+    _react2.default.createElement('hr', null)
+  );
+};
+
+exports.default = CommitDates;
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var GithubProfile = function GithubProfile(_ref) {
+  var commit = _ref.commit;
+  return _react2.default.createElement(
+    "div",
+    { className: "user v-container v-centered centered" },
+    _react2.default.createElement(
+      "h3",
+      null,
+      commit.author
+    ),
+    _react2.default.createElement(
+      "a",
+      { href: commit.user_html_url },
+      _react2.default.createElement("img", { className: "avatar", src: commit.author_avatar })
+    )
+  );
+};
+
+exports.default = GithubProfile;
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Filter = function Filter(_ref) {
+  var by = _ref.by,
+      children = _ref.children;
+
+  return _react2.default.createElement(
+    'div',
+    null,
+    children.filter(function (child) {
+      return by(child.props);
+    })
+  );
+};
+
+exports.default = Filter;
 
 /***/ })
 /******/ ]);

@@ -110,8 +110,9 @@ class App extends Component {
             students={this.state.students}
           />
           <CommitBlade 
+            currentStudent={this.state.currentStudent}
             isHidden={!!this.state.currentRepo} 
-            data={this.state.filteredCommits}
+            commits={this.state.filteredCommits}
           />
         </div>
       </div>

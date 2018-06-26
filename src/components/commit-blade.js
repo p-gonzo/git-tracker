@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Commit from './commit.js';
+import Filter from './utility/filter.js'
 import * as $ from 'jquery';
-
 
 let id = 0;
 
@@ -16,8 +16,7 @@ class CommitBlade extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props)
-    this.getCommitDetails(nextProps.data);
+    this.getCommitDetails(nextProps.commits);
   }
 
   reduceAdditions() {
@@ -37,7 +36,6 @@ class CommitBlade extends Component {
   getCommitDetails(commits) {
     if(!Array.isArray(commits)) return;
     let commitDetails = commits.map((commit) => {
-      console.log(commit)
       return $.post({
         url: '/api/commits/expand/' + commit._id,
       }).catch(e => {
@@ -51,22 +49,29 @@ class CommitBlade extends Component {
       this.setState({commitDetails: details}, () => {
         this.reduceDeletions();
         this.reduceAdditions();
-        console.log('STATE: ', this.state)
       })
     })
     .catch((e) => {throw e})
+
   }
 
   render() {
     return this.props.isHidden ? (
       <div className="blade">
-        <h3> Commits ({this.props.data.length} found) </h3>
+        <h3> Commits ({this.props.commits.length} found) </h3>
         <div className={"small-text"}>( Total additions: {this.state.additions} Total deletions: {this.state.deletions})</div>
-        { this.props.data.length === 0 ? <span> No commits found </span> : null }
+        { this.props.commits.length === 0 ? <span> No commits found </span> : null }
         { 
-          this.props.data ? this.props.data.map((commit, idx) => {
-            return (<Commit key={id++} data={commit} details={this.state.commitDetails ? this.state.commitDetails[idx] : null}/>)
-          }) : null
+          this.props.commits ? 
+          <Filter by={
+            (childProps) => {console.log(childProps, this.props.currentStudent); return ((this.props.currentStudent === null) || (childProps.commit.author === this.props.currentStudent["github-handle"]))}
+          }> 
+            {
+              this.props.commits.map((commit, idx) => {
+                return (<Commit key={id++} commit={commit} details={this.state.commitDetails ? this.state.commitDetails[idx] : null}/>)
+              }) 
+            }
+          </Filter> : null
         }
       </div>
     ) : null ;

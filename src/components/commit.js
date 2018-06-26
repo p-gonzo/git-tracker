@@ -15,8 +15,8 @@ class Commit extends Component {
   render() {
     return (
       <div className="card small-text" onClick={() => this.setState({isExpanded: !this.state.isExpanded})}>
-        <span className="bold">{ this.props.data.author }</span> committed at <span className="bold">{ this.props.data.created_at }</span> with the following message: <span className="italic">{ this.props.data.title }</span>
-        <ExpandedCommit commit={this.props.data} commitDetails={this.props.details} hidden={!this.state.isExpanded} />
+        <span className="bold">{ this.props.commit.author }</span> committed at <span className="bold">{ this.props.commit.created_at }</span> with the following message: <span className="italic">{ this.props.commit.title }</span>
+        <ExpandedCommit commit={this.props.commit} commitDetails={this.props.details} hidden={!this.state.isExpanded} />
       </div>
     );
   }
