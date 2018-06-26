@@ -31083,6 +31083,7 @@ var App = function (_Component) {
     value: function getCommits() {
       var _this5 = this;
 
+      console.log(':>>>>>>', this.state.currentRepo);
       $.get('/api/commits/byProject/' + this.state.currentRepo._id).done(function (resp) {
         console.log(resp);
         if (!resp) {

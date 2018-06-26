@@ -28,22 +28,31 @@ Router.get('/commits', (req, res) => {
 })
 
 Router.post('/commits/expand/:commit_id', (req, res) => {
-  if(!req.params || !req.params.commit_id) {
-    res.status(400).send('no commit ID attached to request.')
+  if(!req.params || !req.params.commit_id || req.params.commit_id === "undefined") {
+    res.status(400).send('no commit ID attached to request.');
+    return;
   }
 
   Commit.findById(req.params.commit_id).exec((err, doc) => {
-    new Commit().expand(doc).then((expandedDoc) => {
-      new Commit()
+    if(err) {
+      res.status(500).send('Server error :(');
+      return;
+    } else if(!doc) {
+      res.status(404).send('Not found :(');
+      return;
+    } 
+    new Commit()
+    .expand(doc)
+    .then((expandedDoc) => {
+      return new Commit()
       .upsert(expandedDoc)
-      .then((result) => {
-        console.log('upserted...')
-        res.status(200).send(result);
-      })
-      .catch(error => {
-        console.error(error);
-        res.status(500).send('Failed to upsert.')
-      })
+    })
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send('Failed to upsert.')
     })
   })
 });

@@ -77,6 +77,7 @@ class App extends Component {
   }
 
   getCommits() {
+    console.log(':>>>>>>', this.state.currentRepo)
     $.get(`/api/commits/byProject/${this.state.currentRepo._id}`)
     .done((resp) => {
       console.log(resp)

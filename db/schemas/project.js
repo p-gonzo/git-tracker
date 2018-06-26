@@ -38,12 +38,15 @@ Project.prototype.getCommits = (projectID) => {
     return github(doc);
   }) 
   .then((commits) => {
-    let docs = commits.map((commit, idx) => {
+    let docs = commits
+    .map((commit, idx) => {
       let c = new Commit();
       return c.upsert(commit);
     });
-
-    return Promise.all(docs);
+    return Promise
+    .all(docs)
+    .then((resolved) => {
+      return resolved.filter(item => item !== undefined)});
   })
   .catch((err) => {
     console.error(err);
