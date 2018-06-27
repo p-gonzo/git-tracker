@@ -31005,8 +31005,7 @@ var App = function (_Component) {
       currentStudent: null,
       repos: [],
       currentRepo: null,
-      commits: [],
-      filteredCommits: []
+      commits: []
     };
     _this.maybeGetCommits();
     return _this;
@@ -31029,30 +31028,9 @@ var App = function (_Component) {
       });
     }
   }, {
-    key: 'filterCommitsByStudent',
-    value: function filterCommitsByStudent() {
-      var _this3 = this;
-
-      if (this.state.currentStudent === null) {
-        this.setState({
-          filteredCommits: this.state.commits
-        });
-      } else {
-        this.setState({
-          filteredCommits: this.state.commits.filter(function (commit) {
-            return commit.author === _this3.state.currentStudent['github-handle'];
-          })
-        });
-      }
-    }
-  }, {
     key: 'setCurrentStudent',
     value: function setCurrentStudent(student) {
-      var _this4 = this;
-
-      this.setState({ currentStudent: student }, function () {
-        _this4.filterCommitsByStudent();
-      });
+      this.setState({ currentStudent: student });
     }
   }, {
     key: 'setCurrentRepo',
@@ -31081,17 +31059,13 @@ var App = function (_Component) {
   }, {
     key: 'getCommits',
     value: function getCommits() {
-      var _this5 = this;
+      var _this3 = this;
 
-      console.log(':>>>>>>', this.state.currentRepo);
       $.get('/api/commits/byProject/' + this.state.currentRepo._id).done(function (resp) {
-        console.log(resp);
         if (!resp) {
           return;
         }
-        _this5.setState({ commits: resp }, function () {
-          _this5.filterCommitsByStudent();
-        });
+        _this3.setState({ commits: resp });
       }).fail(function (err) {
         console.log(err.getAllResponseHeaders());
       });
@@ -31124,7 +31098,7 @@ var App = function (_Component) {
           _react2.default.createElement(_commitBlade2.default, {
             currentStudent: this.state.currentStudent,
             isHidden: !!this.state.currentRepo,
-            commits: this.state.filteredCommits
+            commits: this.state.commits
           })
         )
       );
@@ -31202,6 +31176,7 @@ var CommitBlade = function (_Component) {
     key: 'reduceAdditions',
     value: function reduceAdditions() {
       var totalAdditions = this.state.commitDetails.reduce(function (total, currentCommit) {
+        if (!currentCommit) return total;
         return total + currentCommit.additions;
       }, 0);
       this.setState({ additions: totalAdditions });
@@ -31210,6 +31185,7 @@ var CommitBlade = function (_Component) {
     key: 'reduceDeletions',
     value: function reduceDeletions() {
       var totalDeletions = this.state.commitDetails.reduce(function (total, currentCommit) {
+        if (!currentCommit) return total;
         return total + currentCommit.deletions;
       }, 0);
       this.setState({ deletions: totalDeletions });
@@ -31270,7 +31246,7 @@ var CommitBlade = function (_Component) {
         this.props.commits ? _react2.default.createElement(
           _filter2.default,
           { by: function by(childProps) {
-              console.log(childProps, _this3.props.currentStudent);return _this3.props.currentStudent === null || childProps.commit.author === _this3.props.currentStudent["github-handle"];
+              return _this3.props.currentStudent === null || childProps.commit.author === _this3.props.currentStudent["github-handle"];
             } },
           this.props.commits.map(function (commit, idx) {
             return _react2.default.createElement(_commit2.default, { key: id++, commit: commit, details: _this3.state.commitDetails ? _this3.state.commitDetails[idx] : null });

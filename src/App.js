@@ -17,7 +17,6 @@ class App extends Component {
       repos: [],
       currentRepo: null,
       commits: [],
-      filteredCommits: []
     }
     this.maybeGetCommits();
   }
@@ -35,24 +34,8 @@ class App extends Component {
     .catch(e => {throw e})
   }
 
-  filterCommitsByStudent() {
-    if(this.state.currentStudent === null) {
-      this.setState({
-        filteredCommits: this.state.commits
-      })
-    } else {
-      this.setState({
-        filteredCommits: this.state.commits.filter((commit => 
-          commit.author === this.state.currentStudent['github-handle']
-        ))
-      })
-    }
-  }
-
   setCurrentStudent(student) {
-    this.setState({currentStudent: student}, () => {
-      this.filterCommitsByStudent();
-    })
+    this.setState({currentStudent: student})
   }
 
   setCurrentRepo(repo) {
@@ -77,14 +60,10 @@ class App extends Component {
   }
 
   getCommits() {
-    console.log(':>>>>>>', this.state.currentRepo)
     $.get(`/api/commits/byProject/${this.state.currentRepo._id}`)
     .done((resp) => {
-      console.log(resp)
       if(!resp) {return;}
-      this.setState({commits: resp}, () => {
-        this.filterCommitsByStudent();
-      });
+      this.setState({commits: resp});
     })
     .fail((err) => {console.log(err.getAllResponseHeaders())})
   }
@@ -112,7 +91,7 @@ class App extends Component {
           <CommitBlade 
             currentStudent={this.state.currentStudent}
             isHidden={!!this.state.currentRepo} 
-            commits={this.state.filteredCommits}
+            commits={this.state.commits}
           />
         </div>
       </div>

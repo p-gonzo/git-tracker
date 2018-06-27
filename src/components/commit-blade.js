@@ -21,6 +21,7 @@ class CommitBlade extends Component {
 
   reduceAdditions() {
     let totalAdditions = this.state.commitDetails.reduce((total, currentCommit) => {
+      if(!currentCommit) return total;
       return total + currentCommit.additions;
     }, 0)
     this.setState({additions: totalAdditions});
@@ -28,6 +29,7 @@ class CommitBlade extends Component {
 
   reduceDeletions() {
     let totalDeletions = this.state.commitDetails.reduce((total, currentCommit) => {
+      if(!currentCommit) return total;
       return total + currentCommit.deletions;
     }, 0)
     this.setState({deletions: totalDeletions});
@@ -63,9 +65,7 @@ class CommitBlade extends Component {
         { this.props.commits.length === 0 ? <span> No commits found </span> : null }
         { 
           this.props.commits ? 
-          <Filter by={
-            (childProps) => {console.log(childProps, this.props.currentStudent); return ((this.props.currentStudent === null) || (childProps.commit.author === this.props.currentStudent["github-handle"]))}
-          }> 
+          <Filter by={(childProps) => ((this.props.currentStudent === null) || (childProps.commit.author === this.props.currentStudent["github-handle"]))}> 
             {
               this.props.commits.map((commit, idx) => {
                 return (<Commit key={id++} commit={commit} details={this.state.commitDetails ? this.state.commitDetails[idx] : null}/>)
