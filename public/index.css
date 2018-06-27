@@ -25,6 +25,10 @@ body {
   font-size: 10pt;
 }
 
+.tiny-text {
+  font-size: 7pt;
+}
+
 .avatar {
   height: 100px;
   width: 100px;

@@ -67,8 +67,11 @@ Commit.prototype.expand = (doc) => {
         "User-Agent": "git-tracker"
       }
     }, (error, response, body) => {
-      if(error) throw error;
-      resolve(JSON.parse(response.toJSON().body))
+      if(error) {
+        reject(error)
+      } else if(!!response) {
+        resolve(JSON.parse(response.toJSON().body))
+      } else {reject(new Error('empty response'))};
     })
   })
 }

@@ -10,6 +10,7 @@ class Repo extends Component {
     return (
       <div className={'card ' + (this.props.isSelected ? 'selected' : '')} onClick={this.handleClick.bind(this)}>
         { this.props.repo.group_name }
+        <a className="tiny-text" href={`https://www.github.com/${this.props.repo.org_name}/${this.props.repo.repo_name}`}>(View on GitHub)</a>
       </div>
     );
   }

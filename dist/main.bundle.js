@@ -31000,6 +31000,8 @@ var App = function (_Component) {
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
     _this.state = {
+      commitBladeIsOpen: false,
+      commitsRequestResolved: false,
       studentsAreShowing: false,
       students: [],
       currentStudent: null,
@@ -31047,8 +31049,12 @@ var App = function (_Component) {
   }, {
     key: 'maybeGetCommits',
     value: function maybeGetCommits(oldCurrentRepo) {
+      var _this3 = this;
+
       if (this.state.currentRepo && this.state.currentRepo !== oldCurrentRepo) {
-        this.getCommits();
+        this.setState({ commitsRequestResolved: false }, function () {
+          _this3.getCommits();
+        });
       }
     }
   }, {
@@ -31059,13 +31065,17 @@ var App = function (_Component) {
   }, {
     key: 'getCommits',
     value: function getCommits() {
-      var _this3 = this;
+      var _this4 = this;
 
       $.get('/api/commits/byProject/' + this.state.currentRepo._id).done(function (resp) {
         if (!resp) {
           return;
         }
-        _this3.setState({ commits: resp });
+        _this4.setState({
+          commits: resp,
+          commitsRequestResolved: true,
+          commitBladeIsOpen: true
+        });
       }).fail(function (err) {
         console.log(err.getAllResponseHeaders());
       });
@@ -31085,7 +31095,7 @@ var App = function (_Component) {
           { className: 'container' },
           _react2.default.createElement(_repoBlade2.default, {
             selectRepo: this.setCurrentRepo.bind(this),
-            repos: this.state.repos,
+            repos: this.state.repos.reverse(),
             selectedRepo: this.state.currentRepo
           }),
           _react2.default.createElement(_studentBlade2.default, {
@@ -31096,8 +31106,9 @@ var App = function (_Component) {
             students: this.state.students
           }),
           _react2.default.createElement(_commitBlade2.default, {
+            open: this.state.commitBladeIsOpen,
             currentStudent: this.state.currentStudent,
-            isHidden: !!this.state.currentRepo,
+            isLoading: this.state.commitsRequestResolved,
             commits: this.state.commits
           })
         )
@@ -31131,9 +31142,17 @@ var _commit = __webpack_require__(32);
 
 var _commit2 = _interopRequireDefault(_commit);
 
+var _addDelSummary = __webpack_require__(61);
+
+var _addDelSummary2 = _interopRequireDefault(_addDelSummary);
+
 var _filter = __webpack_require__(59);
 
 var _filter2 = _interopRequireDefault(_filter);
+
+var _spinner = __webpack_require__(60);
+
+var _spinner2 = _interopRequireDefault(_spinner);
 
 var _jquery = __webpack_require__(10);
 
@@ -31160,6 +31179,7 @@ var CommitBlade = function (_Component) {
     var _this = _possibleConstructorReturn(this, (CommitBlade.__proto__ || Object.getPrototypeOf(CommitBlade)).call(this, props));
 
     _this.state = {
+      showing: false,
       commitDetails: [],
       additions: 0,
       deletions: 0
@@ -31171,6 +31191,23 @@ var CommitBlade = function (_Component) {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       this.getCommitDetails(nextProps.commits);
+      if (nextProps.commits !== this.props.commits) {
+        this.setState({
+          showing: false,
+          commitDetails: [],
+          additions: 0,
+          deletions: 0
+        });
+      }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      if (this.props.isLoading === false && this.state.showing === true) {
+        this.setState({ showing: false });
+      } else if (this.props.isLoading === true && this.state.showing === false) {
+        this.setState({ showing: true });
+      }
     }
   }, {
     key: 'reduceAdditions',
@@ -31219,7 +31256,7 @@ var CommitBlade = function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      return this.props.isHidden ? _react2.default.createElement(
+      return this.props.open ? _react2.default.createElement(
         'div',
         { className: 'blade' },
         _react2.default.createElement(
@@ -31229,21 +31266,13 @@ var CommitBlade = function (_Component) {
           this.props.commits.length,
           ' found) '
         ),
-        _react2.default.createElement(
-          'div',
-          { className: "small-text" },
-          '( Total additions: ',
-          this.state.additions,
-          ' Total deletions: ',
-          this.state.deletions,
-          ')'
-        ),
+        _react2.default.createElement(_addDelSummary2.default, { additions: this.state.additions, deletions: this.state.deletions }),
         this.props.commits.length === 0 ? _react2.default.createElement(
           'span',
           null,
           ' No commits found '
         ) : null,
-        this.props.commits ? _react2.default.createElement(
+        this.state.showing ? _react2.default.createElement(
           _filter2.default,
           { by: function by(childProps) {
               return _this3.props.currentStudent === null || childProps.commit.author === _this3.props.currentStudent["github-handle"];
@@ -31251,7 +31280,7 @@ var CommitBlade = function (_Component) {
           this.props.commits.map(function (commit, idx) {
             return _react2.default.createElement(_commit2.default, { key: id++, commit: commit, details: _this3.state.commitDetails ? _this3.state.commitDetails[idx] : null });
           })
-        ) : null
+        ) : _react2.default.createElement(_spinner2.default, null)
       ) : null;
     }
   }]);
@@ -33087,7 +33116,12 @@ var Repo = function (_Component) {
       return _react2.default.createElement(
         'div',
         { className: 'card ' + (this.props.isSelected ? 'selected' : ''), onClick: this.handleClick.bind(this) },
-        this.props.repo.group_name
+        this.props.repo.group_name,
+        _react2.default.createElement(
+          'a',
+          { className: 'tiny-text', href: 'https://www.github.com/' + this.props.repo.org_name + '/' + this.props.repo.repo_name },
+          '(View on GitHub)'
+        )
       );
     }
   }]);
@@ -33634,6 +33668,81 @@ var Filter = function Filter(_ref) {
 };
 
 exports.default = Filter;
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var spinnerStyles = {
+  height: '3em',
+  width: '3em'
+};
+
+var spinnerContainerStyles = {
+  paddingTop: '3em',
+  width: '100%',
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  justifyContent: 'center',
+  alignItems: 'center'
+};
+
+var Spinner = function Spinner() {
+  return _react2.default.createElement(
+    'div',
+    { style: spinnerContainerStyles },
+    _react2.default.createElement('img', { style: spinnerStyles, src: '/public/spinner.gif' })
+  );
+};
+
+exports.default = Spinner;
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AddDelSummary = function AddDelSummary(_ref) {
+  var additions = _ref.additions,
+      deletions = _ref.deletions;
+
+  return additions && deletions && (additions > 0 || deletions > 0) ? _react2.default.createElement(
+    "div",
+    { className: "small-text" },
+    "( Total additions: ",
+    additions,
+    " Total deletions: ",
+    deletions,
+    ")"
+  ) : null;
+};
+
+exports.default = AddDelSummary;
 
 /***/ })
 /******/ ]);

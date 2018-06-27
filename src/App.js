@@ -11,6 +11,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      commitBladeIsOpen: false,
+      commitsRequestResolved: false,
       studentsAreShowing: false,
       students: [],
       currentStudent: null,
@@ -51,7 +53,9 @@ class App extends Component {
 
   maybeGetCommits(oldCurrentRepo) {
     if(this.state.currentRepo && this.state.currentRepo !== oldCurrentRepo) {
-      this.getCommits();
+      this.setState({commitsRequestResolved: false}, () => {
+        this.getCommits();
+      })
     }
   }
 
@@ -63,7 +67,11 @@ class App extends Component {
     $.get(`/api/commits/byProject/${this.state.currentRepo._id}`)
     .done((resp) => {
       if(!resp) {return;}
-      this.setState({commits: resp});
+      this.setState({
+        commits: resp,
+        commitsRequestResolved: true,
+        commitBladeIsOpen: true
+      });
     })
     .fail((err) => {console.log(err.getAllResponseHeaders())})
   }
@@ -78,7 +86,7 @@ class App extends Component {
         <div className="container">
           <RepoBlade 
             selectRepo={this.setCurrentRepo.bind(this)} 
-            repos={this.state.repos} 
+            repos={this.state.repos.reverse()} 
             selectedRepo={this.state.currentRepo}
           />
           <StudentBlade 
@@ -89,8 +97,9 @@ class App extends Component {
             students={this.state.students}
           />
           <CommitBlade 
+            open={this.state.commitBladeIsOpen}
             currentStudent={this.state.currentStudent}
-            isHidden={!!this.state.currentRepo} 
+            isLoading={this.state.commitsRequestResolved} 
             commits={this.state.commits}
           />
         </div>
