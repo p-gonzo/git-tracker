@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  background-color: #ADD7EC;
+  background-color: #B1E8BD;
 }
 
 .bold {
@@ -36,7 +36,7 @@ body {
 }
 
 .blade {
-  background-color: lightgray;
+  background-color: #40C25D;
   width: 20em;
   padding-top: 1.5em;
   margin-top: 1em;
@@ -44,13 +44,14 @@ body {
 }
 
 .card {
-  background-color: #519ABD;
+  background-color: #378F9F;
   color: white;
   border: 1px solid black;
   padding: 0.4em;
   margin-top: 0.2em;
   margin-right: 0.5em;
   margin-bottom: 0.2em;
+  box-shadow: 4px 4px 0px 1px #00831D;
 }
 
 
@@ -72,8 +73,17 @@ body {
   transition: opacity 500ms ease-in;
 }
 
+.hoverable {
+  opacity: 0.7
+}
+
+.hoverable:hover {
+  opacity: 1
+}
+
 .selected {
-  background-color: lightcoral;
+  background-color: #475FAE;
+  opacity: 1;
 }
 
 .container {

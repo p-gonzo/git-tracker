@@ -31347,7 +31347,7 @@ var Commit = function (_Component) {
 
       return _react2.default.createElement(
         'div',
-        { className: 'card small-text', onClick: function onClick() {
+        { className: "hoverable card small-text" + (this.state.isExpanded ? ' selected' : ''), onClick: function onClick() {
             return _this2.setState({ isExpanded: !_this2.state.isExpanded });
           } },
         _react2.default.createElement(
@@ -31367,7 +31367,11 @@ var Commit = function (_Component) {
           { className: 'italic' },
           this.props.commit.title
         ),
-        _react2.default.createElement(_expandedCommit2.default, { commit: this.props.commit, commitDetails: this.props.details, hidden: !this.state.isExpanded })
+        _react2.default.createElement(_expandedCommit2.default, {
+          commit: this.props.commit,
+          commitDetails: this.props.details,
+          hidden: !this.state.isExpanded
+        })
       );
     }
   }]);
@@ -31601,7 +31605,7 @@ var Student = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: "card " + (this.props.isSelected ? 'selected' : ''), onClick: this.handleClick.bind(this) },
+        { className: "hoverable card " + (this.props.isSelected ? 'selected' : ''), onClick: this.handleClick.bind(this) },
         this.props.student.name
       );
     }
@@ -33115,11 +33119,11 @@ var Repo = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'card ' + (this.props.isSelected ? 'selected' : ''), onClick: this.handleClick.bind(this) },
+        { className: 'hoverable card ' + (this.props.isSelected ? 'selected' : ''), onClick: this.handleClick.bind(this) },
         this.props.repo.group_name,
         _react2.default.createElement(
           'a',
-          { className: 'tiny-text', href: 'https://www.github.com/' + this.props.repo.org_name + '/' + this.props.repo.repo_name },
+          { className: 'tiny-text', href: 'https://www.github.com/' + this.props.repo.org_name + '/' + this.props.repo.repo_name, target: '_blank' },
           '(View on GitHub)'
         )
       );
@@ -33152,23 +33156,27 @@ var Display = function Display(_ref) {
   var currentStudent = _ref.currentStudent,
       currentRepo = _ref.currentRepo;
   return _react2.default.createElement(
-    'div',
+    "div",
     null,
     _react2.default.createElement(
-      'div',
+      "h1",
       null,
-      ' Selected Student: ',
-      currentStudent ? currentStudent.name : null,
-      ' '
+      " Git Trackin'! "
     ),
     _react2.default.createElement(
-      'div',
-      null,
-      ' Selected Repo: ',
-      currentRepo ? currentRepo.org_name : null,
-      ' '
+      "div",
+      { className: "small-text" },
+      " Selected Student: ",
+      currentStudent ? currentStudent.name : null,
+      " "
     ),
-    _react2.default.createElement('hr', null)
+    _react2.default.createElement(
+      "div",
+      { className: "small-text" },
+      " Selected Repo: ",
+      currentRepo ? currentRepo.org_name : null,
+      " "
+    )
   );
 };
 

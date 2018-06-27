@@ -79,10 +79,10 @@ class App extends Component {
   render() {
     return (
       <div className="v-container">
-          <Display
-            currentStudent={this.state.currentStudent}
-            currentRepo={this.state.currentRepo}
-          />
+        <Display
+          currentStudent={this.state.currentStudent}
+          currentRepo={this.state.currentRepo}
+        />
         <div className="container">
           <RepoBlade 
             selectRepo={this.setCurrentRepo.bind(this)} 

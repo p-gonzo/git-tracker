@@ -2,9 +2,9 @@ import React from 'react';
 
 const Display = ({currentStudent, currentRepo}) => (
   <div>
-    <div> Selected Student: { currentStudent ? currentStudent.name : null } </div>
-    <div> Selected Repo: { currentRepo ? currentRepo.org_name : null } </div>
-    <hr/>
+    <h1> Git Trackin'! </h1>
+    <div className="small-text"> Selected Student: { currentStudent ? currentStudent.name : null } </div>
+    <div className="small-text"> Selected Repo: { currentRepo ? currentRepo.org_name : null } </div>
   </div>
 )
 

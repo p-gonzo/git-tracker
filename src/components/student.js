@@ -8,7 +8,7 @@ class Student extends Component {
 
   render() {
     return (
-      <div  className={"card " + (this.props.isSelected ? 'selected' : '')} onClick={this.handleClick.bind(this)}>
+      <div  className={"hoverable card " + (this.props.isSelected ? 'selected' : '')} onClick={this.handleClick.bind(this)}>
         { this.props.student.name }
       </div>
     );
