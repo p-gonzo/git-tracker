@@ -31,7 +31,7 @@ class App extends Component {
     .catch(e => {throw e})
     $.get('/api/projects')
     .then((projects) => {
-      this.setState({repos: projects})
+      this.setState({repos: projects.reverse()})
     })
     .catch(e => {throw e})
   }
@@ -86,7 +86,7 @@ class App extends Component {
         <div className="container">
           <RepoBlade 
             selectRepo={this.setCurrentRepo.bind(this)} 
-            repos={this.state.repos.reverse()} 
+            repos={this.state.repos} 
             selectedRepo={this.state.currentRepo}
           />
           <StudentBlade 

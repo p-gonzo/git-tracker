@@ -31024,7 +31024,7 @@ var App = function (_Component) {
         throw e;
       });
       $.get('/api/projects').then(function (projects) {
-        _this2.setState({ repos: projects });
+        _this2.setState({ repos: projects.reverse() });
       }).catch(function (e) {
         throw e;
       });
@@ -31095,7 +31095,7 @@ var App = function (_Component) {
           { className: 'container' },
           _react2.default.createElement(_repoBlade2.default, {
             selectRepo: this.setCurrentRepo.bind(this),
-            repos: this.state.repos.reverse(),
+            repos: this.state.repos,
             selectedRepo: this.state.currentRepo
           }),
           _react2.default.createElement(_studentBlade2.default, {
