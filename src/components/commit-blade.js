@@ -64,12 +64,15 @@ class CommitBlade extends Component {
   getCommitDetails(commits) {
     if(!Array.isArray(commits)) return;
     let commitDetails = commits.map((commit) => {
-      return $.post({
-        url: '/api/commits/expand/' + commit._id,
-      }).catch(e => {
-        console.log(e.getAllResponseHeaders());
-        return null;
-      })
+      if(commit._id) {
+        return $.post({
+          url: '/api/commits/expand/' + commit._id,
+        }).catch(e => {
+          console.log(e.getAllResponseHeaders());
+          return null;
+        })
+      } 
+      return commit;
     });
 
     Promise.all(commitDetails)

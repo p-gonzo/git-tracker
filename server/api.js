@@ -62,11 +62,13 @@ Router.post('/commits/expand/:commit_id', (req, res) => {
 // })
 
 Router.get('/commits/byProject/:project_id', (req, res) => {
-  let p = new Project();
   if(!req.params || !req.params.project_id) {
     res.status(400).send('no project ID attached to request.')
   }
-  p.getCommits(req.params.project_id)
+  Project.fromID(req.params.project_id)
+  .then((project) => {
+    return project.getCommits(req.params.project_id)
+  })
   .then((data) => {
     res.status(200).send(data);
   })

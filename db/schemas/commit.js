@@ -19,14 +19,21 @@ let Commit = mongoose.model('commit', commitSchema);
 
 
 Commit.fromGithubData = (githubRepoResponse) => {
+  let { author, commit } = githubRepoResponse;
+  if (!author) console.warn('no author specified for commit.')
+  if (!commit) console.warn('no commit details specified for commit.')
+
   let newDoc = {
-    user_html_url: githubRepoResponse.user.html_url || '',
-    author_avatar: githubRepoResponse.user.avatar_url|| '',
-    git_id: githubRepoResponse.id || '',
-    created_at: new Date(githubRepoResponse.created_at) || new Date(),
-    author: githubRepoResponse.user.login || '',
+    title: githubRepoResponse.commit.message,
+    user_html_url: (githubRepoResponse.author && githubRepoResponse.author.html_url) || '',
+    author_avatar: (githubRepoResponse.author && githubRepoResponse.author.avatar_url) || '',
+    git_id: githubRepoResponse.sha || '',
+    created_at: new Date(githubRepoResponse.commit.committer.date) || new Date(),
+    author: (githubRepoResponse.author && githubRepoResponse.author.login) || 'Someone',
+    comments_url: githubRepoResponse.comments_url || '',
+    url: githubRepoResponse.url || ''
   }
-  return Object.assign({}, githubRepoResponse, newDoc);
+  return newDoc;
 }
 
 Commit.prototype.getAll = () => {
@@ -42,12 +49,17 @@ Commit.prototype.getAll = () => {
 
 Commit.prototype.upsert = (document) => {
   return new Promise((resolve, reject) => {
-    if(!document || !document.id) reject(new Error('No document specified!'))
-    let document_id = document.id;
-    Commit.findOneAndUpdate({git_id: document_id}, Commit.fromGithubData(document), {upsert: true}, function(err, doc){
-      if(err) console.log(err);    
+    if(!document || !document.sha) reject(new Error('No document specified!'))
+    let document_id = document.sha;
+
+    let q = Commit
+    .findOneAndUpdate({git_id: document_id}, Commit.fromGithubData(document), {upsert: true, new: true})
+      q.exec((err, doc) => {
+      if(err) console.log('ERROR in commit.js ll. 54: ', err);
       if(!doc) { // findOneAndUpdate returns null when it upserts.
-        Commit.find({git_id: document_id}).exec((err, commit) => {
+        Commit
+        .find({git_id: document_id})
+        .exec((err, commit) => {
           if(err) console.log(err);   
           resolve(commit);
         }) 

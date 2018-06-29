@@ -31095,8 +31095,7 @@ var App = function (_Component) {
           { className: 'container' },
           _react2.default.createElement(_repoBlade2.default, {
             selectRepo: this.setCurrentRepo.bind(this),
-            repos: this.state.repos,
-            selectedRepo: this.state.currentRepo
+            repos: this.state.repos
           }),
           _react2.default.createElement(_studentBlade2.default, {
             isHidden: !!this.state.studentsAreShowing,
@@ -31234,12 +31233,15 @@ var CommitBlade = function (_Component) {
 
       if (!Array.isArray(commits)) return;
       var commitDetails = commits.map(function (commit) {
-        return $.post({
-          url: '/api/commits/expand/' + commit._id
-        }).catch(function (e) {
-          console.log(e.getAllResponseHeaders());
-          return null;
-        });
+        if (commit._id) {
+          return $.post({
+            url: '/api/commits/expand/' + commit._id
+          }).catch(function (e) {
+            console.log(e.getAllResponseHeaders());
+            return null;
+          });
+        }
+        return commit;
       });
 
       Promise.all(commitDetails).then(function (details) {
@@ -33044,17 +33046,39 @@ var id = 0;
 var RepoBlade = function (_Component) {
   _inherits(RepoBlade, _Component);
 
-  function RepoBlade() {
+  function RepoBlade(props) {
     _classCallCheck(this, RepoBlade);
 
-    return _possibleConstructorReturn(this, (RepoBlade.__proto__ || Object.getPrototypeOf(RepoBlade)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (RepoBlade.__proto__ || Object.getPrototypeOf(RepoBlade)).call(this, props));
+
+    _this.state = {
+      selected: null
+    };
+    return _this;
   }
 
   _createClass(RepoBlade, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      var selectedMatch = this.state.selected === nextState.selected;
+      var repoListMatch = this.props.repos === nextProps.repos;
+      console.log(selectedMatch, this.state.selected, nextState.selected);
+      return !repoListMatch || !selectedMatch;
+      // return true;
+    }
+  }, {
+    key: 'selectRepo',
+    value: function selectRepo(repo) {
+      console.log('>>>>', repo);
+      // this.props.selectRepo(repo);  // call any functionality inherited from the parent
+      this.setState({ selected: repo });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
 
+      console.log('re-render', this.state.selected);
       return _react2.default.createElement(
         'div',
         { className: 'blade' },
@@ -33064,7 +33088,12 @@ var RepoBlade = function (_Component) {
           ' Tracked Repos '
         ),
         this.props.repos.map(function (repo) {
-          return _react2.default.createElement(_repo2.default, { key: id++, isSelected: _this2.props.selectedRepo === repo, select: _this2.props.selectRepo, repo: repo });
+          return _react2.default.createElement(_repo2.default, {
+            key: id++,
+            select: _this2.props.selectRepo,
+            isSelected: _this2.state.selected === repo,
+            repo: repo
+          });
         })
       );
     }
@@ -33092,6 +33121,16 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _shyDiv = __webpack_require__(56);
+
+var _shyDiv2 = _interopRequireDefault(_shyDiv);
+
+var _jquery = __webpack_require__(10);
+
+var $ = _interopRequireWildcard(_jquery);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33103,16 +33142,31 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Repo = function (_Component) {
   _inherits(Repo, _Component);
 
-  function Repo() {
+  function Repo(props) {
     _classCallCheck(this, Repo);
 
-    return _possibleConstructorReturn(this, (Repo.__proto__ || Object.getPrototypeOf(Repo)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Repo.__proto__ || Object.getPrototypeOf(Repo)).call(this, props));
+
+    _this.state = {
+      branches: []
+    };
+    return _this;
   }
 
   _createClass(Repo, [{
     key: 'handleClick',
     value: function handleClick(e) {
       this.props.select(this.props.repo);
+      this.getBranches();
+    }
+  }, {
+    key: 'getBranches',
+    value: function getBranches() {
+      var _this2 = this;
+
+      $.get('https://api.github.com/repos/' + this.props.repo.org_name + '/' + this.props.repo.repo_name + '/branches').then(function (data) {
+        return _this2.setState({ branches: data });
+      });
     }
   }, {
     key: 'render',
@@ -33125,7 +33179,21 @@ var Repo = function (_Component) {
           'a',
           { className: 'tiny-text', href: 'https://www.github.com/' + this.props.repo.org_name + '/' + this.props.repo.repo_name, target: '_blank' },
           '(View on GitHub)'
-        )
+        ),
+        _react2.default.createElement(
+          'select',
+          null,
+          this.state.branches.map(function (branch) {
+            return _react2.default.createElement(
+              'option',
+              { value: branch.name },
+              ' ',
+              branch.name,
+              ' '
+            );
+          })
+        ),
+        '/>'
       );
     }
   }]);

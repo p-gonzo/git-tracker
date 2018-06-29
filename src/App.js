@@ -87,7 +87,6 @@ class App extends Component {
           <RepoBlade 
             selectRepo={this.setCurrentRepo.bind(this)} 
             repos={this.state.repos} 
-            selectedRepo={this.state.currentRepo}
           />
           <StudentBlade 
             isHidden={!!this.state.studentsAreShowing} 

@@ -2,27 +2,6 @@ let request = require('request');
 let Commit = require('./commit.js');
 let Project = require('./project.js');
 
-
-// let commitIsAlreadySaved = (project) => {
-//   return new Promise((resolve, reject) => {
-//     Project
-//     .findById(project._id);
-//     .exec((err, doc) => {
-//       if(err) reject(err);
-//       else {resolve(doc.commits_last_updated)}
-//     })
-//   })
-// }
-
-// let maybeSaveCommit = (commit) => {
-//   Commit
-//   .findOneAndUpdate({'git_id': commit.id} commit, {upsert: true})
-//   .exec(() => {
-//     console.log('upserted: ', commit.id);
-//   })
-// }
-
-
 // request comes in
   // if commit already saved
     // retrieve from DB
@@ -32,9 +11,9 @@ let Project = require('./project.js');
     // save it to db
 
 
-const githubFetch = (project) => {
+const githubFetch = (project, pageLimit=500) => {
   return new Promise((resolve, reject) => {
-    let commitUrl = `https://api.github.com/repos/${project.org_name}/${project.repo_name}/pulls?state=all`
+    let commitUrl = `https://api.github.com/repos/${project.org_name}/${project.repo_name}/commits?state=all&per_page=${pageLimit}&type=owner`
     request({
       url: commitUrl,
       headers: {
@@ -42,8 +21,8 @@ const githubFetch = (project) => {
         "User-Agent": "git-tracker"
       }
     }, (error, response, body) => {
-      if(error) {console.log('err:', err)}
-      resolve(JSON.parse(response.toJSON().body))
+      if(error) {reject(error)}
+      else {resolve(JSON.parse(response.toJSON().body))}
     })
   })
 }
