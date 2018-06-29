@@ -10,10 +10,6 @@
     selectedCommitIndex: Number
   }
 
-  Necessary actions:
-
-  --add
-
 */
 
 import { combineReducers } from 'redux';
@@ -21,27 +17,9 @@ import { combineReducers } from 'redux';
 const projects = require('./projects.js');
 const selectedProject = require('./selected-project.js')
 const students = require('./students.js')
-
-const selectedStudent = (state=[], action) => {
-  switch(action.type) {
-    default: 
-      return state 
-  } 
-}
-
-const commits = (state=[], action) => {
-  switch(action.type) {
-    default: 
-      return state 
-  } 
-}
-
-const selectedCommit = (state=[], action) => {
-  switch(action.type) {
-    default: 
-      return state 
-  } 
-}
+const selectedStudent = require('./selected-students.js')
+const commits = require('./commits.js')
+const selectedCommit = require('./selected-commit.js')
 
 export default combineReducers({
   projects,

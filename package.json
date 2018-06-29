@@ -35,7 +35,7 @@
     "start": "node server/server.js",
     "dev:start": "nodemon server/server.js",
     "build": "webpack --watch",
-    "test": "mocha spec",
+    "test": "mocha spec --exit",
     "eject": "react-scripts eject"
   }
 }
