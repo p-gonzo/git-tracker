@@ -32,7 +32,6 @@ class RepoBlade extends Component {
   }
 
   render() {
-    console.log('re-render', this.state.selected)
     return (
       <div className="blade">
         <h3> Tracked Repos </h3>
@@ -50,7 +49,7 @@ class RepoBlade extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('>>>>>', state)
+  console.log('state: ', state)
   return {
     repos: state.projects
   }

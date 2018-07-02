@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 const Display = ({currentStudent, currentRepo}) => (
   <div>
@@ -8,4 +9,11 @@ const Display = ({currentStudent, currentRepo}) => (
   </div>
 )
 
-export default Display;
+const mapStateToProps = (state) => {
+  return {
+    currentStudent: state.selectedStudent,
+    currentRepo: state.selectedProject
+  }
+}
+
+export default connect(mapStateToProps)(Display);

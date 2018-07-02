@@ -52,5 +52,23 @@ module.exports = {
       type: "REMOVE_STUDENT",
       payload: payload
     }
+  },
+  SET_COMMITS: (payload) => {
+    return {
+      type: "SET_COMMITS",
+      payload: payload
+    }
+  },
+  ADD_COMMIT: (payload) => {
+    return {
+      type: "ADD_COMMIT",
+      payload: payload
+    }
+  },
+  REMOVE_COMMIT: (payload) => {
+    return {
+      type: "REMOVE_COMMIT",
+      payload: payload
+    }
   }
 }

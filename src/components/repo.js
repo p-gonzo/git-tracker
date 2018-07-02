@@ -4,6 +4,7 @@ import { SET_CURRENT_PROJECT } from '../actions/actions.js'
 import * as $ from 'jquery';
 import PropTypes from 'prop-types';
 
+let id = 0;
 
 class Repo extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class Repo extends Component {
         <a className="tiny-text" href={`https://www.github.com/${this.props.repo.org_name}/${this.props.repo.repo_name}`} target="_blank">(View on GitHub)</a>
         <select>
           {
-            this.state.branches.map(branch => <option value= { branch.name }> { branch.name } </option>)
+            this.state.branches.map(branch => <option key={id++} value= { branch.name }> { branch.name } </option>)
           }
         </select>
       </div>

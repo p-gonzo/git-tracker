@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Student from './student.js';
+import { connect } from 'react-redux';
+import { SET_CURRENT_STUDENT, SET_STUDENTS } from '../actions/actions.js'
+import * as $ from 'jquery';
+
 import * as ReactTransitions from 'react-transition-group'; // ES5 with npm
 
 let id = 0;
@@ -15,6 +19,10 @@ class StudentBlade extends Component {
     };
   }
 
+  componentDidMount(nextProps, nextState) {
+    this.props.loadStudents();
+  }
+
   filterStudentsByRepo(cb) {
     if(this.state.currentRepo === null) {
       this.setState({displayedNames: this.props.students}, cb);
@@ -25,12 +33,11 @@ class StudentBlade extends Component {
 
   render() {
     return (
-      this.props.isHidden ? (
+      this.props.isHidden() ? (
       <div className="blade">
-        <h3> Tracked Students ({this.props.selectedStudents.length} found) </h3>
+        <h3> Tracked Students ({this.props.students.length} found) </h3>
           {
             this.props.students
-            .filter((student => this.props.selectedStudents.includes(student.name)))
             .map((student) => (<Student 
               key={id++} 
               isSelected={this.props.currentStudent && this.props.currentStudent.name === student.name} 
@@ -44,14 +51,37 @@ class StudentBlade extends Component {
   }
 }
 
+
 Student.propTypes = {
   currentStudent: PropTypes.shape({
     "github-handle": PropTypes.string,
     "name": PropTypes.string
-  }).isRequired,
-  selectedStudents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  }),
+  students: PropTypes.arrayOf(PropTypes.object),
   selectStudent: PropTypes.func,
-  isHidden: PropTypes.bool.isRequired
+  isHidden: PropTypes.bool
 }
 
-export default StudentBlade;
+const mapStateToProps = (state) => {
+  return {
+    students: state.students.filter((st) => state.selectedProject && state.selectedProject.group_members.includes(st.name)),
+    selectedStudent: state.currentStudent,
+    isHidden: () => !!state.selectedProject
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectStudent: (student) => {
+      dispatch(SET_CURRENT_STUDENT(student));
+    },
+    loadStudents: () => {
+      $.get('/api/students')
+      .then(students => {
+        dispatch(SET_STUDENTS(students));
+      })
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StudentBlade);

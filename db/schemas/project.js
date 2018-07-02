@@ -41,7 +41,6 @@ projectSchema.methods.getCommits = function() {
     }
     let docs = commits
     .map((commit) => {
-      console.log('~~~~~~~~~', commit)
       return new Commit(commit)
       .upsert(commit)
       .catch((err) => {

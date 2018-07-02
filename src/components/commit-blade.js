@@ -3,6 +3,8 @@ import Commit from './commit.js';
 import AddDelSummary from './add-del-summary.js';
 import Filter from './utility/filter.js';
 import Spinner from './utility/spinner.js';
+import { connect } from 'react-redux';
+import { SET_COMMITS } from '../actions/actions.js';
 import * as $ from 'jquery';
 
 let id = 0;
@@ -18,6 +20,12 @@ class CommitBlade extends Component {
     }
   }
 
+  componentDidUpdate(nextProps, nextState) {
+    if(this.props.currentProject !== nextProps.currentProject) {
+      this.props.loadCommits(this.props.currentProject);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     this.getCommitDetails(nextProps.commits);
     if(nextProps.commits !== this.props.commits) {
@@ -28,21 +36,6 @@ class CommitBlade extends Component {
         deletions: 0
       })
     }
-  }
-
-  componentDidUpdate() {
-    if(
-      this.props.isLoading === false &&
-      this.state.showing === true
-    ) {
-      this.setState({showing: false});
-    } else if(
-      this.props.isLoading === true &&
-      this.state.showing === false
-    ) {
-      this.setState({showing: true});
-    }
-
   }
 
   reduceAdditions() {
@@ -87,13 +80,13 @@ class CommitBlade extends Component {
   }
 
   render() {
-    return this.props.open ? (
+    return this.props.open() ? (
       <div className="blade">
         <h3> Commits ({this.props.commits.length} found) </h3>
         <AddDelSummary additions={this.state.additions} deletions={this.state.deletions}/>
         { this.props.commits.length === 0 ? <span> No commits found </span> : null }
         { 
-          this.state.showing ? 
+          this.props.loaded() ? 
           <Filter by={(childProps) => ((this.props.currentStudent === null) || (childProps.commit.author === this.props.currentStudent["github-handle"]))}> 
             {
               this.props.commits.map((commit, idx) => {
@@ -108,4 +101,27 @@ class CommitBlade extends Component {
 }
 
 
-export default CommitBlade;
+const mapStateToProps = (state) => {
+  return {
+    commits: state.commits,
+    currentStudent: state.selectedStudent,
+    currentProject: state.selectedProject,
+    open: () => !!state.selectedProject,
+    loaded: () => state.commits.length > 0
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    loadCommits: (project) => {
+      console.log('getting commits')
+      $.get(`/api/commits/byProject/${project._id}`)
+      .then(commits => {
+        dispatch(SET_COMMITS(commits));
+      })
+    }
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CommitBlade);

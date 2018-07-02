@@ -12387,6 +12387,24 @@ module.exports = {
       type: "REMOVE_STUDENT",
       payload: payload
     };
+  },
+  SET_COMMITS: function SET_COMMITS(payload) {
+    return {
+      type: "SET_COMMITS",
+      payload: payload
+    };
+  },
+  ADD_COMMIT: function ADD_COMMIT(payload) {
+    return {
+      type: "ADD_COMMIT",
+      payload: payload
+    };
+  },
+  REMOVE_COMMIT: function REMOVE_COMMIT(payload) {
+    return {
+      type: "REMOVE_COMMIT",
+      payload: payload
+    };
   }
 };
 
@@ -32238,119 +32256,22 @@ var App = function (_Component) {
   function App(props) {
     _classCallCheck(this, App);
 
-    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
-
-    _this.state = {
-      commitBladeIsOpen: false,
-      commitsRequestResolved: false,
-      studentsAreShowing: false,
-      students: [],
-      currentStudent: null,
-      repos: [],
-      currentRepo: null,
-      commits: []
-    };
-    _this.maybeGetCommits();
-    return _this;
+    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
   }
 
   _createClass(App, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      $.get('/api/students').then(function (students) {
-        _this2.setState({ students: students });
-      }).catch(function (e) {
-        throw e;
-      });
-      $.get('/api/projects').then(function (projects) {
-        _this2.setState({ repos: projects.reverse() });
-      }).catch(function (e) {
-        throw e;
-      });
-    }
-  }, {
-    key: 'setCurrentStudent',
-    value: function setCurrentStudent(student) {
-      this.setState({ currentStudent: student });
-    }
-  }, {
-    key: 'setCurrentRepo',
-    value: function setCurrentRepo(repo) {
-      var stateUpdate = {
-        currentRepo: repo,
-        studentsAreShowing: true
-      };
-      if (this.state.currentStudent && !repo.group_members.includes(this.state.currentStudent.name)) {
-        stateUpdate.currentStudent = null;
-      }
-      this.setState(stateUpdate);
-    }
-  }, {
-    key: 'maybeGetCommits',
-    value: function maybeGetCommits(oldCurrentRepo) {
-      var _this3 = this;
-
-      if (this.state.currentRepo && this.state.currentRepo !== oldCurrentRepo) {
-        this.setState({ commitsRequestResolved: false }, function () {
-          _this3.getCommits();
-        });
-      }
-    }
-  }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate(oldProps, oldState) {
-      this.maybeGetCommits(oldState.currentRepo);
-    }
-  }, {
-    key: 'getCommits',
-    value: function getCommits() {
-      var _this4 = this;
-
-      $.get('/api/commits/byProject/' + this.state.currentRepo._id).done(function (resp) {
-        if (!resp) {
-          return;
-        }
-        _this4.setState({
-          commits: resp,
-          commitsRequestResolved: true,
-          commitBladeIsOpen: true
-        });
-      }).fail(function (err) {
-        console.log(err.getAllResponseHeaders());
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
         { className: 'v-container' },
-        _react2.default.createElement(_display2.default, {
-          currentStudent: this.state.currentStudent,
-          currentRepo: this.state.currentRepo
-        }),
+        _react2.default.createElement(_display2.default, null),
         _react2.default.createElement(
           'div',
           { className: 'container' },
-          _react2.default.createElement(_repoBlade2.default, {
-            selectRepo: this.setCurrentRepo.bind(this),
-            repos: this.state.repos
-          }),
-          _react2.default.createElement(_studentBlade2.default, {
-            isHidden: !!this.state.studentsAreShowing,
-            selectedStudents: this.state.currentRepo ? this.state.currentRepo.group_members : [],
-            currentStudent: this.state.currentStudent,
-            selectStudent: this.setCurrentStudent.bind(this),
-            students: this.state.students
-          }),
-          _react2.default.createElement(_commitBlade2.default, {
-            open: this.state.commitBladeIsOpen,
-            currentStudent: this.state.currentStudent,
-            isLoading: this.state.commitsRequestResolved,
-            commits: this.state.commits
-          })
+          _react2.default.createElement(_repoBlade2.default, null),
+          _react2.default.createElement(_studentBlade2.default, null),
+          _react2.default.createElement(_commitBlade2.default, null)
         )
       );
     }
@@ -32391,6 +32312,10 @@ var _spinner = __webpack_require__(49);
 
 var _spinner2 = _interopRequireDefault(_spinner);
 
+var _reactRedux = __webpack_require__(23);
+
+var _actions = __webpack_require__(22);
+
 var _jquery = __webpack_require__(7);
 
 var $ = _interopRequireWildcard(_jquery);
@@ -32425,6 +32350,13 @@ var CommitBlade = function (_Component) {
   }
 
   _createClass(CommitBlade, [{
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(nextProps, nextState) {
+      if (this.props.currentProject !== nextProps.currentProject) {
+        this.props.loadCommits(this.props.currentProject);
+      }
+    }
+  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       this.getCommitDetails(nextProps.commits);
@@ -32435,15 +32367,6 @@ var CommitBlade = function (_Component) {
           additions: 0,
           deletions: 0
         });
-      }
-    }
-  }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
-      if (this.props.isLoading === false && this.state.showing === true) {
-        this.setState({ showing: false });
-      } else if (this.props.isLoading === true && this.state.showing === false) {
-        this.setState({ showing: true });
       }
     }
   }, {
@@ -32496,7 +32419,7 @@ var CommitBlade = function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      return this.props.open ? _react2.default.createElement(
+      return this.props.open() ? _react2.default.createElement(
         'div',
         { className: 'blade' },
         _react2.default.createElement(
@@ -32512,7 +32435,7 @@ var CommitBlade = function (_Component) {
           null,
           ' No commits found '
         ) : null,
-        this.state.showing ? _react2.default.createElement(
+        this.props.loaded() ? _react2.default.createElement(
           _filter2.default,
           { by: function by(childProps) {
               return _this3.props.currentStudent === null || childProps.commit.author === _this3.props.currentStudent["github-handle"];
@@ -32528,7 +32451,32 @@ var CommitBlade = function (_Component) {
   return CommitBlade;
 }(_react.Component);
 
-exports.default = CommitBlade;
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    commits: state.commits,
+    currentStudent: state.selectedStudent,
+    currentProject: state.selectedProject,
+    open: function open() {
+      return !!state.selectedProject;
+    },
+    loaded: function loaded() {
+      return state.commits.length > 0;
+    }
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    loadCommits: function loadCommits(project) {
+      console.log('getting commits');
+      $.get('/api/commits/byProject/' + project._id).then(function (commits) {
+        dispatch((0, _actions.SET_COMMITS)(commits));
+      });
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(CommitBlade);
 
 /***/ }),
 /* 43 */
@@ -32918,6 +32866,14 @@ var _student = __webpack_require__(53);
 
 var _student2 = _interopRequireDefault(_student);
 
+var _reactRedux = __webpack_require__(23);
+
+var _actions = __webpack_require__(22);
+
+var _jquery = __webpack_require__(7);
+
+var $ = _interopRequireWildcard(_jquery);
+
 var _reactTransitionGroup = __webpack_require__(54);
 
 var ReactTransitions = _interopRequireWildcard(_reactTransitionGroup);
@@ -32952,6 +32908,11 @@ var StudentBlade = function (_Component) {
   }
 
   _createClass(StudentBlade, [{
+    key: 'componentDidMount',
+    value: function componentDidMount(nextProps, nextState) {
+      this.props.loadStudents();
+    }
+  }, {
     key: 'filterStudentsByRepo',
     value: function filterStudentsByRepo(cb) {
       var _this2 = this;
@@ -32969,19 +32930,17 @@ var StudentBlade = function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      return this.props.isHidden ? _react2.default.createElement(
+      return this.props.isHidden() ? _react2.default.createElement(
         'div',
         { className: 'blade' },
         _react2.default.createElement(
           'h3',
           null,
           ' Tracked Students (',
-          this.props.selectedStudents.length,
+          this.props.students.length,
           ' found) '
         ),
-        this.props.students.filter(function (student) {
-          return _this3.props.selectedStudents.includes(student.name);
-        }).map(function (student) {
+        this.props.students.map(function (student) {
           return _react2.default.createElement(_student2.default, {
             key: id++,
             isSelected: _this3.props.currentStudent && _this3.props.currentStudent.name === student.name,
@@ -33000,13 +32959,38 @@ _student2.default.propTypes = {
   currentStudent: _propTypes2.default.shape({
     "github-handle": _propTypes2.default.string,
     "name": _propTypes2.default.string
-  }).isRequired,
-  selectedStudents: _propTypes2.default.arrayOf(_propTypes2.default.object).isRequired,
+  }),
+  students: _propTypes2.default.arrayOf(_propTypes2.default.object),
   selectStudent: _propTypes2.default.func,
-  isHidden: _propTypes2.default.bool.isRequired
+  isHidden: _propTypes2.default.bool
 };
 
-exports.default = StudentBlade;
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    students: state.students.filter(function (st) {
+      return state.selectedProject && state.selectedProject.group_members.includes(st.name);
+    }),
+    selectedStudent: state.currentStudent,
+    isHidden: function isHidden() {
+      return !!state.selectedProject;
+    }
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    selectStudent: function selectStudent(student) {
+      dispatch((0, _actions.SET_CURRENT_STUDENT)(student));
+    },
+    loadStudents: function loadStudents() {
+      $.get('/api/students').then(function (students) {
+        dispatch((0, _actions.SET_STUDENTS)(students));
+      });
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(StudentBlade);
 
 /***/ }),
 /* 51 */
@@ -34555,7 +34539,6 @@ var RepoBlade = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      console.log('re-render', this.state.selected);
       return _react2.default.createElement(
         'div',
         { className: 'blade' },
@@ -34580,7 +34563,7 @@ var RepoBlade = function (_Component) {
 }(_react.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
-  console.log('>>>>>', state);
+  console.log('state: ', state);
   return {
     repos: state.projects
   };
@@ -34639,6 +34622,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var id = 0;
+
 var Repo = function (_Component) {
   _inherits(Repo, _Component);
 
@@ -34686,7 +34671,7 @@ var Repo = function (_Component) {
           this.state.branches.map(function (branch) {
             return _react2.default.createElement(
               'option',
-              { value: branch.name },
+              { key: id++, value: branch.name },
               ' ',
               branch.name,
               ' '
@@ -35820,37 +35805,46 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRedux = __webpack_require__(23);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Display = function Display(_ref) {
   var currentStudent = _ref.currentStudent,
       currentRepo = _ref.currentRepo;
   return _react2.default.createElement(
-    "div",
+    'div',
     null,
     _react2.default.createElement(
-      "h1",
+      'h1',
       null,
-      " Git Trackin'! "
+      ' Git Trackin\'! '
     ),
     _react2.default.createElement(
-      "div",
-      { className: "small-text" },
-      " Selected Student: ",
+      'div',
+      { className: 'small-text' },
+      ' Selected Student: ',
       currentStudent ? currentStudent.name : null,
-      " "
+      ' '
     ),
     _react2.default.createElement(
-      "div",
-      { className: "small-text" },
-      " Selected Repo: ",
+      'div',
+      { className: 'small-text' },
+      ' Selected Repo: ',
       currentRepo ? currentRepo.org_name : null,
-      " "
+      ' '
     )
   );
 };
 
-exports.default = Display;
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    currentStudent: state.selectedStudent,
+    currentRepo: state.selectedProject
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(Display);
 
 /***/ }),
 /* 91 */
@@ -36206,11 +36200,11 @@ var projects = __webpack_require__(96); /*
                                          
                                            {
                                              projects: Array,
-                                             selectedProjectIndex: Number,
+                                             selectedProject: Object,
                                              students: Array,
-                                             selectedStudentIndex: Number,
+                                             selectedStudent: Object,
                                              commits: Array,
-                                             selectedCommitIndex: Number
+                                             selectedCommit: Object
                                            }
                                          
                                          */

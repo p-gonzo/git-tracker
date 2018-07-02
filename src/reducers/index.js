@@ -3,11 +3,11 @@
 
   {
     projects: Array,
-    selectedProjectIndex: Number,
+    selectedProject: Object,
     students: Array,
-    selectedStudentIndex: Number,
+    selectedStudent: Object,
     commits: Array,
-    selectedCommitIndex: Number
+    selectedCommit: Object
   }
 
 */
