@@ -4,7 +4,6 @@ let db = require('../db/config.js');
 let nock = require('nock')
 
 let spies = require('./sinon.config.js');
-spies.setUp();
 
 let expect = require('chai').expect;
 let Project = require('../db/schemas/project.js');

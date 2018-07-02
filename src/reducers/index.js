@@ -17,7 +17,7 @@ import { combineReducers } from 'redux';
 const projects = require('./projects.js');
 const selectedProject = require('./selected-project.js')
 const students = require('./students.js')
-const selectedStudent = require('./selected-students.js')
+const selectedStudent = require('./selected-student.js')
 const commits = require('./commits.js')
 const selectedCommit = require('./selected-commit.js')
 

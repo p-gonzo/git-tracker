@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Student from './student.js';
 import * as ReactTransitions from 'react-transition-group'; // ES5 with npm
 
@@ -41,6 +42,16 @@ class StudentBlade extends Component {
       </div>) : null
     );
   }
+}
+
+Student.propTypes = {
+  currentStudent: PropTypes.shape({
+    "github-handle": PropTypes.string,
+    "name": PropTypes.string
+  }).isRequired,
+  selectedStudents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  selectStudent: PropTypes.func,
+  isHidden: PropTypes.bool.isRequired
 }
 
 export default StudentBlade;

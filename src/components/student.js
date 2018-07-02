@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 
 class Student extends Component {
 
@@ -13,6 +15,13 @@ class Student extends Component {
       </div>
     );
   }
+}
+
+Student.propTypes = {
+  student: PropTypes.shape({
+    "github-handle": PropTypes.string,
+    "name": PropTypes.string
+  }).isRequired
 }
 
 export default Student;
