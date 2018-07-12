@@ -1,5 +1,5 @@
-const projects = (state=[], action) => {
-  switch(action.type) {
+const projects = (state = [], action) => {
+  switch (action.type) {
     case "SET_PROJECTS":
       return action.payload;
     case "ADD_PROJECT":
@@ -8,9 +8,9 @@ const projects = (state=[], action) => {
       let newState = state.slice();
       newState.splice(action.payload, 1);
       return newState;
-    default: 
+    default:
       return state;
-  } 
-}
+  }
+};
 
 module.exports = projects;

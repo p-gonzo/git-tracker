@@ -1,10 +1,10 @@
-const selectedProject = (state=null, action) => {
+const selectedProject = (state = null, action) => {
   switch (action.type) {
     case "SET_CURRENT_PROJECT":
       return Object.assign({}, state, action.payload);
-    default: 
+    default:
       return state;
-  } 
-}
+  }
+};
 
-module.exports = selectedProject
+module.exports = selectedProject;

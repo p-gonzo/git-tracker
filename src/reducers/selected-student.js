@@ -1,10 +1,10 @@
-const selectedStudent = (state=null, action) => {
+const selectedStudent = (state = null, action) => {
   switch (action.type) {
     case "SET_CURRENT_STUDENT":
       return Object.assign({}, state, action.payload);
-    default: 
+    default:
       return state;
-  } 
-}
+  }
+};
 
-module.exports = selectedStudent
+module.exports = selectedStudent;

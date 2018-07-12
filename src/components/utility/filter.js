@@ -1,13 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-const Filter = ({by, children}) => {
-  return (
-  <div>
-    {
-      children.filter((child) => by(child.props))
-    }
-  </div>
-)}
+const Filter = ({ by, children }) => {
+  return <div>{children.filter(child => by(child.props))}</div>;
+};
 
-
-export default Filter
+export default Filter;

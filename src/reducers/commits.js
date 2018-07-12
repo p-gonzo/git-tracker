@@ -1,5 +1,5 @@
-const commits = (state=[], action) => {
-  switch(action.type) {
+const commits = (state = [], action) => {
+  switch (action.type) {
     case "SET_COMMITS":
       return action.payload;
     case "ADD_COMMIT":
@@ -8,9 +8,9 @@ const commits = (state=[], action) => {
       let newState = state.slice();
       newState.splice(action.payload, 1);
       return newState;
-    default: 
+    default:
       return state;
-  } 
-}
+  }
+};
 
 module.exports = commits;
