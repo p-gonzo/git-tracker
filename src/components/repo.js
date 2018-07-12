@@ -45,14 +45,14 @@ class Repo extends Component {
         >
           (View on GitHub)
         </a>
-        <select>
+        {/* <select>
           {this.state.branches.map(branch => (
             <option key={id++} value={branch.name}>
               {" "}
               {branch.name}{" "}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
     );
   }

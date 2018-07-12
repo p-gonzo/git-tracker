@@ -15,6 +15,10 @@ class App extends Component {
   render() {
     return (
       <div className="v-container">
+        <img
+          className="background"
+          src="https://c.pxhere.com/photos/c1/04/beach_steps_lonely_away_sand_sandy_feet_nature-554283.jpg!d"
+        />
         <Display />
         <div className="container">
           <RepoBlade />

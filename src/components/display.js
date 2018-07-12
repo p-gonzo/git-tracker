@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 
 const Display = ({ currentStudent, currentRepo }) => (
   <div>
-    <h1> Git Trackin'! </h1>
-    <div className="small-text">
+    <h1 className="shadowed"> Git Trackin'! </h1>
+    <div className="shadowed small-text">
       {" "}
       Selected Student: {currentStudent ? currentStudent.name : null}{" "}
     </div>
-    <div className="small-text">
+    <div className="shadowed small-text">
       {" "}
       Selected Repo: {currentRepo ? currentRepo.org_name : null}{" "}
     </div>

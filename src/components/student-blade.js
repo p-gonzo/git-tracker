@@ -45,8 +45,8 @@ class StudentBlade extends Component {
           <Student
             key={id++}
             isSelected={
-              this.props.currentStudent &&
-              this.props.currentStudent.name === student.name
+              this.props.selectedStudent &&
+              this.props.selectedStudent.name === student.name
             }
             select={this.props.selectStudent}
             student={student}
@@ -58,7 +58,7 @@ class StudentBlade extends Component {
 }
 
 Student.propTypes = {
-  currentStudent: PropTypes.shape({
+  selectedStudent: PropTypes.shape({
     "github-handle": PropTypes.string,
     name: PropTypes.string
   }),
@@ -74,7 +74,7 @@ const mapStateToProps = state => {
         state.selectedProject &&
         state.selectedProject.group_members.includes(st.name)
     ),
-    selectedStudent: state.currentStudent,
+    selectedStudent: state.selectedStudent,
     isHidden: () => !!state.selectedProject
   };
 };

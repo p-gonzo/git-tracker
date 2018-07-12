@@ -9,9 +9,6 @@ let id = 0;
 class RepoBlade extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selected: null
-    };
   }
 
   componentDidMount() {
@@ -19,26 +16,26 @@ class RepoBlade extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let selectedMatch = this.state.selected === nextState.selected;
+    console.log(nextProps, nextState);
+    let selectedMatch = this.props.selectedRepo === nextProps.selectedRepo;
     let repoListMatch = this.props.repos === nextProps.repos;
     return !repoListMatch || !selectedMatch;
     // return true;
   }
 
-  selectRepo(repo) {
-    // this.props.selectRepo(repo);  // call any functionality inherited from the parent
-    this.setState({ selected: repo });
-  }
-
   render() {
+    console.log(">>>>>", this.props);
     return (
       <div className="blade">
         <h3> Tracked Repos </h3>
         {this.props.repos.map(repo => (
           <Repo
             key={id++}
-            select={this.props.selectRepo}
-            isSelected={this.state.selected === repo}
+            select={() => this.props.selectRepo(repo)}
+            isSelected={
+              this.props.selectedProject &&
+              this.props.selectedProject.repo_name === repo.repo_name
+            }
             repo={repo}
           />
         ))}
@@ -48,9 +45,9 @@ class RepoBlade extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log("state: ", state);
   return {
-    repos: state.projects
+    repos: state.projects,
+    selectedProject: state.selectedProject
   };
 };
 

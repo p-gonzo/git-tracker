@@ -5,6 +5,23 @@ body {
   background-color: #B1E8BD;
 }
 
+h3 {
+  padding-left: 5%;
+  padding-right: 5%;
+
+}
+
+.shadowed {
+  text-shadow: 0px 0px 15px #B1E8BD
+}
+
+.background {
+  z-index: -99;
+  opacity: 0.3;
+  position: fixed;
+  width: 100%;
+}
+
 .bold {
   font-weight: 900;
 }
@@ -37,9 +54,10 @@ body {
 
 .blade {
   background-color: #40C25D;
-  width: 20em;
+  width: 33.3%;
   padding-top: 1.5em;
   margin-top: 1em;
+  opacity: 0.7;
   border: 1px solid grey;
 }
 
@@ -74,7 +92,7 @@ body {
 }
 
 .hoverable {
-  opacity: 0.7
+  opacity: 0.8
 }
 
 .hoverable:hover {
