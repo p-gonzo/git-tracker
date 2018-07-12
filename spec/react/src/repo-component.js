@@ -29,7 +29,7 @@ describe("Repo component", () => {
 
   it("should render the name of the repo", () => {
     let children = globals.repo.find(".card").children();
-    expect(children).to.have.length(3);
+    expect(children).to.have.length(2);
     expect(children.at(0).text()).to.equal(fakeRepo.group_name);
   });
 
