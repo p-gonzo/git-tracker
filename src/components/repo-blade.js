@@ -16,7 +16,6 @@ class RepoBlade extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    console.log(nextProps, nextState);
     let selectedMatch = this.props.selectedRepo === nextProps.selectedRepo;
     let repoListMatch = this.props.repos === nextProps.repos;
     return !repoListMatch || !selectedMatch;
@@ -24,7 +23,6 @@ class RepoBlade extends Component {
   }
 
   render() {
-    console.log(">>>>>", this.props);
     return (
       <div className="blade">
         <h3> Tracked Repos </h3>

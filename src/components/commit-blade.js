@@ -95,7 +95,6 @@ class CommitBlade extends Component {
   }
 
   render() {
-    console.log("render!");
     return this.props.open() ? (
       <div className="blade">
         <h3> Commits ({this.props.commits.length} found) </h3>
@@ -149,7 +148,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     loadCommits: project => {
-      console.log("getting commits");
       $.get(`/api/commits/byProject/${project._id}`).then(commits => {
         dispatch(SET_COMMITS(commits));
       });
