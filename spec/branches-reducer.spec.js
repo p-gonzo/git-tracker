@@ -3,14 +3,14 @@ let branchesReducer = require("../src/reducers/branches.js");
 let expect = require("chai").expect;
 
 describe("Branches reducer", function() {
-  it("should be a function", () => {
+  xit("should be a function", () => {
     expect(branchesReducer).to.be.a("function");
   });
-  it("should return an array when no previous state is passed", () => {
+  xit("should return an array when no previous state is passed", () => {
     expect(branchesReducer(undefined, {})).to.deep.equal([]);
   });
 
-  it("should swap the entire state for the payload of a SET_BRANCHES action", () => {
+  xit("should swap the entire state for the payload of a SET_BRANCHES action", () => {
     let action = {
       type: "SET_BRANCHES",
       payload: [1, 2, 3]
@@ -19,7 +19,7 @@ describe("Branches reducer", function() {
     expect(newState).to.deep.equal([1, 2, 3]);
   });
 
-  it("should add a new commit when the ADD_BRANCH action is received", () => {
+  xit("should add a new commit when the ADD_BRANCH action is received", () => {
     let action = {
       type: "ADD_BRANCH",
       payload: 4
@@ -28,7 +28,7 @@ describe("Branches reducer", function() {
     expect(newState).to.deep.equal([1, 2, 3, 4]);
   });
 
-  it("should remove a project at the specified index when the REMOVE_BRANCH action is received", () => {
+  xit("should remove a project at the specified index when the REMOVE_BRANCH action is received", () => {
     let action = {
       type: "REMOVE_BRANCH",
       payload: 1
