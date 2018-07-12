@@ -78,10 +78,16 @@ class CommitBlade extends Component {
 
     Promise.all(commitDetails)
       .then(details => {
-        this.setState({ commitDetails: details }, () => {
-          this.reduceDeletions();
-          this.reduceAdditions();
-        });
+        this.setState(
+          {
+            commitDetails: details,
+            showing: true
+          },
+          () => {
+            this.reduceDeletions();
+            this.reduceAdditions();
+          }
+        );
       })
       .catch(e => {
         throw e;
@@ -89,6 +95,7 @@ class CommitBlade extends Component {
   }
 
   render() {
+    console.log("render!");
     return this.props.open() ? (
       <div className="blade">
         <h3> Commits ({this.props.commits.length} found) </h3>
@@ -99,7 +106,7 @@ class CommitBlade extends Component {
         {this.props.commits.length === 0 ? (
           <span> No commits found </span>
         ) : null}
-        {this.props.loaded() ? (
+        {this.state.showing ? (
           <Filter
             by={childProps =>
               this.props.currentStudent === null ||
