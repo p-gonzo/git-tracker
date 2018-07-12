@@ -60,7 +60,6 @@ class Repo extends Component {
 
 Repo.propTypes = {
   select: PropTypes.func,
-  isSelected: PropTypes.bool.isRequired,
   repo: PropTypes.shape({
     org_name: PropTypes.string,
     repo_name: PropTypes.string,
